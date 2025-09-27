@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SidebarAdministrador from '@/components/SidebarAdministrador';
-import { authHeaders } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,15 +30,15 @@ export default function ImportarFuncionariosPage() {
     setStatus('Enviando e processando a planilha... Por favor, aguarde.');
     setResult(null);
     try {
-      const res = await fetch('/api/admin/import-employees', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ csv: fileText }),
+      const { data, error } = await supabase.functions.invoke('import-employees', {
+        body: { csv: fileText },
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.error || JSON.stringify(body));
-      setResult(body);
-      setStatus(`Importação concluída! Funcionários inseridos: ${body.inserted}. Atualizados: ${body.updated}. Erros: ${body.errors}`);
+      if (error) throw error;
+      setResult(data);
+      const inserted = (data as any)?.inserted ?? 0;
+      const updated = (data as any)?.updated ?? 0;
+      const errors = (data as any)?.errors ?? 0;
+      setStatus(`Importação concluída! Funcionários inseridos: ${inserted}. Atualizados: ${updated}. Erros: ${errors}`);
     } catch (e: any) {
       console.error(e);
       setStatus('Erro ao processar importação: ' + errorMessage(e));
