@@ -8,8 +8,10 @@ export default function GestorRegistrarDesvio() {
   const [funcionarioId, setFuncionarioId] = useState("");
   const [funcionarios, setFuncionarios] = useState<Array<{ id: string; nome: string }>>([]);
   const [misconductTypes, setMisconductTypes] = useState<Array<{ id: string; name: string; default_classification?: string }>>([]);
-  const [dataOcorrencia, setDataOcorrencia] = useState("");
+  const [periodoInicio, setPeriodoInicio] = useState("");
+  const [periodoFim, setPeriodoFim] = useState("");
   const [selectedMisconductTypeId, setSelectedMisconductTypeId] = useState("");
+  const [diasSuspensao, setDiasSuspensao] = useState("");
   const [classificacao, setClassificacao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [anexos, setAnexos] = useState<File[]>([]);
@@ -89,8 +91,13 @@ export default function GestorRegistrarDesvio() {
   const enviarFormulario = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!funcionarioId || !dataOcorrencia || !selectedMisconductTypeId || !classificacao || !descricao) {
+    if (!funcionarioId || !periodoInicio || !periodoFim || !selectedMisconductTypeId || !classificacao || !descricao) {
       toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (new Date(periodoFim) < new Date(periodoInicio)) {
+      toast.error("O fim do período não pode ser anterior ao início.");
       return;
     }
 
@@ -116,10 +123,16 @@ export default function GestorRegistrarDesvio() {
         misconduct_type_id: selectedMisconductTypeId,
         classificacao: classificacao === "Média" ? "Media" : classificacao,
         descricao,
-        data_da_ocorrencia: dataOcorrencia ? new Date(dataOcorrencia).toISOString() : null,
+        periodo_ocorrencia_inicio: periodoInicio ? new Date(periodoInicio).toISOString() : null,
+        periodo_ocorrencia_fim: periodoFim ? new Date(periodoFim).toISOString() : null,
         status: "Em_Analise",
         criado_por_user_id: userId,
       };
+
+      if (diasSuspensao && diasSuspensao.trim() !== "") {
+        const n = Number(diasSuspensao);
+        if (!Number.isNaN(n) && n > 0) payload.dias_de_suspensao = n;
+      }
 
       const { error } = await supabase.from("processes").insert(payload);
       if (error) throw error;
@@ -127,10 +140,12 @@ export default function GestorRegistrarDesvio() {
       toast.success("Desvio registrado com sucesso!");
 
       setFuncionarioId("");
-      setDataOcorrencia("");
+      setPeriodoInicio("");
+      setPeriodoFim("");
       setSelectedMisconductTypeId("");
       setClassificacao("");
       setDescricao("");
+      setDiasSuspensao("");
       setAnexos([]);
       setHistory([]);
     } catch (err: any) {
@@ -185,15 +200,26 @@ export default function GestorRegistrarDesvio() {
                   </select>
                 </div>
 
-                {/* Data da Ocorrência */}
+                {/* Período da Ocorrência */}
                 <div className="sm:col-span-1">
                   <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
-                    Data da Ocorrência
+                    Início da Ocorrência
                   </label>
                   <input
                     type="date"
-                    value={dataOcorrencia}
-                    onChange={(e) => setDataOcorrencia(e.target.value)}
+                    value={periodoInicio}
+                    onChange={(e) => setPeriodoInicio(e.target.value)}
+                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
+                  />
+                </div>
+                <div className="sm:col-span-1">
+                  <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
+                    Fim da Ocorrência
+                  </label>
+                  <input
+                    type="date"
+                    value={periodoFim}
+                    onChange={(e) => setPeriodoFim(e.target.value)}
                     className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
                   />
                 </div>
@@ -289,6 +315,26 @@ export default function GestorRegistrarDesvio() {
                 </div>
               </div>
 
+              {/* Dias de Suspensão (condicional) */}
+              {(() => {
+                const tipo = misconductTypes.find((t) => String(t.id) === selectedMisconductTypeId)?.name || "";
+                const exibir = /suspens/i.test(tipo);
+                return exibir ? (
+                  <div>
+                    <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">Dias de Suspensão</label>
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={diasSuspensao}
+                      onChange={(e) => setDiasSuspensao(e.target.value)}
+                      placeholder="Ex.: 1, 3, 5"
+                      className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
+                    />
+                  </div>
+                ) : null;
+              })()}
+
               {/* Descrição */}
               <div>
                 <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
@@ -328,10 +374,12 @@ export default function GestorRegistrarDesvio() {
                   type="button"
                   onClick={() => {
                     setFuncionarioId("");
-                    setDataOcorrencia("");
+                    setPeriodoInicio("");
+                    setPeriodoFim("");
                     setSelectedMisconductTypeId("");
                     setClassificacao("");
                     setDescricao("");
+                    setDiasSuspensao("");
                     setAnexos([]);
                   }}
                   className="rounded-md border border-sis-border bg-white px-4 py-2 font-roboto text-sm text-sis-dark-text hover:bg-gray-50"
