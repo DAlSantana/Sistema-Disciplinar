@@ -809,8 +809,10 @@ async function selectUserOverridesFlexible(db: any, userId: string): Promise<Use
   const trySelects = [
     async () => db.from('user_permission_overrides').select('permission_name, action').eq('user_id', userId),
     async () => db.from('user_permission_overrides').select('permission, action').eq('user_id', userId),
+    async () => db.from('user_permission_overrides').select('permission_id, action, permissions ( name )').eq('user_id', userId),
     async () => db.from('user_overrides').select('permission_name, action').eq('user_id', userId),
     async () => db.from('user_overrides').select('permission, action').eq('user_id', userId),
+    async () => db.from('user_overrides').select('permission_id, action, permissions ( name )').eq('user_id', userId),
   ];
   for (const fn of trySelects) {
     try {
@@ -818,10 +820,8 @@ async function selectUserOverridesFlexible(db: any, userId: string): Promise<Use
       if (!error && Array.isArray(data) && data.length > 0) {
         return (data as any[]).map((r: any) => {
           const action: 'grant' | 'revoke' = ((r.action || '').toLowerCase() === 'revoke' ? 'revoke' : 'grant');
-          return {
-            permission_name: r.permission_name || r.permission,
-            action,
-          } as UserOverride;
+          const permission_name = r.permission_name || r.permission || r?.permissions?.name;
+          return { permission_name, action } as UserOverride;
         }).filter((r) => r.permission_name);
       }
     } catch {}
