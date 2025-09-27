@@ -153,37 +153,23 @@ function buildPermissionCandidates(name: string): string[] {
 async function findPermissionId(db: any, permissionName: string) {
   const candidates = buildPermissionCandidates(permissionName);
   console.info('[profile-permissions] lookup candidates', { permissionName, candidates });
+  // Prefer schema with only 'name' column
   try {
-    const { data: byName, error: e1 } = await db.from('permissions').select('id,name,permission').in('name', candidates).limit(1);
-    if (e1) console.error('[profile-permissions] by name error', e1);
+    const { data: byName } = await db.from('permissions').select('id,name').in('name', candidates).limit(1);
     const id1 = Array.isArray(byName) && byName[0]?.id;
     if (id1) {
       console.info('[profile-permissions] matched by name', { id: id1, row: byName?.[0] });
       return id1;
     }
-  } catch (e) {
-    console.error('[profile-permissions] by name exception', e);
-  }
+  } catch {}
+  // Fallback OR on name only (avoid non-existent columns)
   try {
-    const { data: byPerm, error: e2 } = await db.from('permissions').select('id,name,permission').in('permission', candidates).limit(1);
-    if (e2) console.error('[profile-permissions] by permission error', e2);
-    const id2 = Array.isArray(byPerm) && byPerm[0]?.id;
-    if (id2) {
-      console.info('[profile-permissions] matched by permission', { id: id2, row: byPerm?.[0] });
-      return id2;
-    }
-  } catch (e) {
-    console.error('[profile-permissions] by permission exception', e);
-  }
-  try {
-    const orParts = candidates.flatMap((n) => [`name.eq.${n}`, `permission.eq.${n}`]).join(',');
-    const { data } = await db.from('permissions').select('id,name,permission').or(orParts).limit(1);
+    const orParts = candidates.map((n) => `name.eq.${n}`).join(',');
+    const { data } = await db.from('permissions').select('id,name').or(orParts).limit(1);
     const id3 = Array.isArray(data) && data[0]?.id;
     console.info('[profile-permissions] fallback or result', { count: Array.isArray(data) ? data.length : 0, id3, orParts });
     if (id3) return id3;
-  } catch (e) {
-    console.error('[profile-permissions] fallback or exception', e);
-  }
+  } catch {}
   return null;
 }
 
@@ -191,8 +177,8 @@ async function ensurePermissionId(db: any, permissionName: string) {
   let id = await findPermissionId(db, permissionName);
   if (id) return id;
   try {
-    // Try to create the permission if it doesn't exist yet
-    await db.from('permissions').insert({ name: permissionName, permission: permissionName } as any);
+    // Try to create the permission if it doesn't exist yet (schema with only 'name')
+    await db.from('permissions').insert({ name: permissionName } as any);
   } catch {}
   id = await findPermissionId(db, permissionName);
   if (!id) throw new Error(`permission not found: ${permissionName}`);
@@ -295,14 +281,14 @@ async function readProfilePermissionsFlexible(db: any): Promise<Record<string, s
       if (Object.keys(by).length) return by;
     }
   } catch {}
-  // Try join to permissions table
+  // Try join to permissions table (schema with permission_id -> permissions.id and permissions.name)
   try {
-    const { data, error } = await db.from('profile_permissions').select('perfil, profile_name, permission, permission_id, permissions ( name, permission )');
-    if (!error && Array.isArray(data)) {
+    const { data } = await db.from('profile_permissions').select('perfil, profile_name, permission_id, permissions ( name )');
+    if (Array.isArray(data)) {
       const by: Record<string, string[]> = {};
       for (const r of data as any[]) {
         const p = r.perfil || r.profile_name || 'unknown';
-        const perm = r.permission || r?.permissions?.name || r?.permissions?.permission || '';
+        const perm = r?.permissions?.name || '';
         if (!perm) continue;
         (by[p] = by[p] || []).push(perm);
       }
@@ -635,10 +621,19 @@ export const listPermissions: RequestHandler = async (_req, res) => {
     if (!ctx) return;
     const db = ctx.db;
 
+    // Prefer schema with only 'name' column
     try {
-      const { data, error } = await db.from('permissions').select('permission, name');
-      if (!error && Array.isArray(data) && data.length > 0) {
-        const names = (data as any).map((d: any) => d.permission || d.name).filter(Boolean);
+      const { data } = await db.from('permissions').select('name');
+      if (Array.isArray(data) && data.length > 0) {
+        const names = (data as any).map((d: any) => d.name).filter(Boolean);
+        if (names.length) return res.json(names);
+      }
+    } catch {}
+    // Fallback schema where column might be called 'permission'
+    try {
+      const { data } = await db.from('permissions').select('permission');
+      if (Array.isArray(data) && data.length > 0) {
+        const names = (data as any).map((d: any) => d.permission).filter(Boolean);
         if (names.length) return res.json(names);
       }
     } catch {}
