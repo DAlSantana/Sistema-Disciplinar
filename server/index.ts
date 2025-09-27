@@ -31,7 +31,7 @@ export function createServer() {
   // Permissions management
   app.get("/api/admin/permissions", listPermissions as any);
   app.get("/api/admin/profile-permissions", getProfilePermissions as any);
-  app.post("/api/admin/profile-permissions", addProfilePermission as any);
+  app.post("/api/admin/profile-permissions", replaceProfilePermissions as any);
   app.delete("/api/admin/profile-permissions", removeProfilePermission as any);
   // Per-user permissions
   app.get("/api/admin/user-permissions/:userId", getUserPermissions as any);
