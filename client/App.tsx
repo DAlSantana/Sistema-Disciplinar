@@ -24,6 +24,8 @@ import ProcessosPage from "./pages/gestor/Processos";
 import ProcessoAcompanhamento from "./pages/gestor/ProcessoAcompanhamento";
 import FuncionarioPage from "./pages/gestor/Funcionario";
 import FuncionariosListaPage from "./pages/gestor/Funcionarios";
+import EsqueciSenha from "./pages/autenticacao/EsqueciSenha";
+import RedefinirSenha from "./pages/autenticacao/RedefinirSenha";
 
 // Mitigate ResizeObserver loop warnings by deferring callbacks to next frame
 if (typeof window !== "undefined" && (window as any).ResizeObserver) {
@@ -72,6 +74,8 @@ const App = () => (
             <Route path="/gestor/processos/:id" element={<ProcessoAcompanhamento />} />
             <Route path="/gestor/funcionarios" element={<FuncionariosListaPage />} />
             <Route path="/gestor/funcionarios/:id" element={<FuncionarioPage />} />
+            <Route path="/autenticacao/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/autenticacao/redefinir-senha" element={<RedefinirSenha />} />
             {/* ADICIONE TODAS AS ROTAS PERSONALIZADAS ACIMA DA ROTA CATCH-ALL "*" */}
             <Route path="*" element={<NaoEncontrado />} />
           </Routes>
