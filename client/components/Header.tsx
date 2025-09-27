@@ -48,7 +48,7 @@ export default function Header({ onRegistrarDesvio, userType = "gestor", placeho
         <div className="flex items-center px-6">
           <img
             className="h-8 w-8 flex-shrink-0"
-            src="https://cdn.builder.io/api/v1/image/assets%2Fd37e8caa844a480690999b86d10efac5%2F21c13cf313cb4f499007dc360015bfce?format=webp&width=64"
+            src="/logo.svg"
             alt="Logo SisDisciplinar"
           />
           <h1 className="ml-2 font-open-sans text-xl font-bold italic text-sis-blue xl:text-[25px] xl:leading-[25px]">
