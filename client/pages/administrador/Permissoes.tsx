@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAvailablePermissions,
   fetchProfilePermissions,
-  setProfilePermission,
   fetchUsers,
   fetchUserPermissions,
   setUserPermission,
+  saveProfilePermissions,
   type PerfilUsuario,
 } from "@/lib/api";
 import { Card } from "@/components/ui/card";
@@ -31,9 +32,15 @@ export default function PermissoesAdminPage() {
     enabled: selectedUserId !== "",
   });
 
-  const toggleProfilePerm = useMutation({
-    mutationFn: async (vars: { perfil: PerfilUsuario; permission: string; enabled: boolean }) => {
-      await setProfilePermission(vars.perfil, vars.permission, vars.enabled);
+  const [localMap, setLocalMap] = useState<Record<string, string[]>>({});
+  useEffect(() => {
+    if (profileMap) setLocalMap(profileMap);
+  }, [profileMap]);
+
+  const saveProfile = useMutation({
+    mutationFn: async (perfil: PerfilUsuario) => {
+      const list = localMap[perfil] || [];
+      await saveProfilePermissions(perfil, list);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-profile-permissions"] });
@@ -72,24 +79,31 @@ export default function PermissoesAdminPage() {
                   <div className="mb-2 font-medium capitalize">{perfil}</div>
                   <div className="space-y-2">
                     {permissionsList.map((perm) => {
-                      const enabled = (currentProfileMap[perfil] || []).includes(perm);
+                      const enabled = (localMap[perfil] || []).includes(perm);
                       return (
                         <div key={perm} className="flex items-center justify-between">
                           <Label className="mr-3 text-sm">{perm}</Label>
                           <Checkbox
                             checked={enabled}
-                            onCheckedChange={(v: any) =>
-                              toggleProfilePerm.mutate({ perfil, permission: perm, enabled: !!v })
-                            }
+                            onCheckedChange={(v: any) => {
+                              const next = new Set(localMap[perfil] || []);
+                              if (v) next.add(perm); else next.delete(perm);
+                              setLocalMap((prev) => ({ ...prev, [perfil]: Array.from(next) }));
+                            }}
                           />
                         </div>
                       );
                     })}
                   </div>
+                <div className="mt-3 text-right">
+                  <Button size="sm" onClick={() => saveProfile.mutate(perfil)} disabled={saveProfile.isPending}>
+                    {saveProfile.isPending ? "Salvando..." : "Salvar"}
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </Card>
+              </div>
+            ))}
+          </div>
+        </Card>
 
           <Card className="p-4 md:p-6">
             <h2 className="mb-4 font-roboto text-lg font-semibold">Por Usuário</h2>
