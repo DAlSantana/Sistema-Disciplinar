@@ -73,7 +73,7 @@ export async function fetchProcesses() {
   const { data: processes } = await supabase
     .from("processes")
     .select(`
-      id, status, classificacao, resolucao, created_at, data_da_ocorrencia,
+      id, status, classificacao, resolucao, created_at, periodo_ocorrencia_inicio, periodo_ocorrencia_fim,
       employees ( nome_completo ),
       misconduct_types ( name )
     `);
@@ -82,8 +82,38 @@ export async function fetchProcesses() {
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
     classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
-    dataAbertura: (() => { const d = p.created_at ?? (p as any).data_da_ocorrencia ?? p.createdAt ?? (p as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
-    createdAt: (p.created_at ?? (p as any).data_da_ocorrencia ?? p.createdAt ?? (p as any).dataOcorrencia) ?? null,
+    dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
+    createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
+    status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
+    resolucao: p.resolucao ?? "",
+  }));
+}
+
+export async function fetchSuspensionsByDateRange(startISO?: string, endISO?: string) {
+  let query = supabase
+    .from("processes")
+    .select(`
+      id, status, classificacao, resolucao, created_at,
+      employees ( nome_completo ),
+      misconduct_types ( name )
+    `)
+    .ilike("resolucao", "%Suspens%");
+  if (startISO) {
+    const s = new Date(startISO).toISOString();
+    query = query.gte("created_at", s);
+  }
+  if (endISO) {
+    const e = new Date(endISO).toISOString();
+    query = query.lte("created_at", e);
+  }
+  const { data } = await query;
+  return (data || []).map((p: any) => ({
+    id: p.id,
+    funcionario: p.employees?.nome_completo ?? "",
+    tipoDesvio: p.misconduct_types?.name ?? "",
+    classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
+    dataAbertura: (() => { const d = p.created_at ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
+    createdAt: (p.created_at ?? p.createdAt) ?? null,
     status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
     resolucao: p.resolucao ?? "",
   }));
@@ -93,7 +123,7 @@ export async function fetchProcessById(id: string) {
   const { data: processes } = await supabase
     .from("processes")
     .select(`
-      id, status, classificacao, resolucao, created_at, data_da_ocorrencia,
+      id, status, classificacao, resolucao, created_at, periodo_ocorrencia_inicio, periodo_ocorrencia_fim,
       employees ( nome_completo ),
       misconduct_types ( name )
     `)
@@ -105,8 +135,8 @@ export async function fetchProcessById(id: string) {
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
     classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
-    dataAbertura: (() => { const d = p.created_at ?? (p as any).data_da_ocorrencia ?? p.createdAt ?? (p as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
-    createdAt: (p.created_at ?? (p as any).data_da_ocorrencia ?? p.createdAt ?? (p as any).dataOcorrencia) ?? null,
+    dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
+    createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
     status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
     resolucao: p.resolucao ?? "",
   };

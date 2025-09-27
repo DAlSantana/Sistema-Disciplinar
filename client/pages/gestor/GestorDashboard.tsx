@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import MetricCard from "@/components/MetricCard";
 import TabelaProcessos from "@/components/TabelaProcessos";
 import { fetchProcesses } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type DashboardProc = {
   id: string;
@@ -28,6 +29,7 @@ export default function GestorDashboard() {
   };
 
   const [processos, setProcessos] = useState<DashboardProc[]>([]);
+  const [topDesvios, setTopDesvios] = useState<Array<{ name: string; count: number }>>([]);
   const [metricas, setMetricas] = useState<Array<{ titulo: string; valor: string; descricao: string; icon: JSX.Element }>>([
     { titulo: "Processos Ativos", valor: "0", descricao: "", icon: (
         <svg className="h-4 w-4" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,6 +107,20 @@ export default function GestorDashboard() {
         setProcessos([]);
         setMetricas((m) => m.map((x) => ({ ...x, valor: "0" })));
       });
+    // Carregar principais desvios ofensores (top 5)
+    supabase
+      .rpc("get_top_misconduct_types")
+      .then(({ data, error }) => {
+        if (!mounted) return;
+        if (error) return;
+        const arr = Array.isArray(data) ? data : data ? [data] : [];
+        const mapped = arr
+          .map((r: any) => ({ name: r.name ?? r.tipo ?? r.misconduct_type ?? "—", count: Number(r.count ?? r.total ?? 0) }))
+          .slice(0, 5);
+        setTopDesvios(mapped);
+      })
+      .catch(() => {});
+
     return () => {
       mounted = false;
     };
@@ -125,6 +141,29 @@ export default function GestorDashboard() {
                 <MetricCard key={index} titulo={metrica.titulo} valor={metrica.valor} descricao={metrica.descricao} icon={metrica.icon} />
               ))}
             </div>
+
+            <div className="mb-8 grid grid-cols-1 gap-6">
+              <Card className="border-sis-border bg-white">
+                <CardHeader>
+                  <CardTitle>Principais Desvios Ofensores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {topDesvios.length === 0 ? (
+                    <div className="text-sm text-sis-secondary-text">Sem dados disponíveis.</div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {topDesvios.map((it, idx) => (
+                        <li key={idx} className="flex items-center justify-between text-sm">
+                          <span className="truncate pr-4">{it.name}</span>
+                          <span className="font-medium">{it.count}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
             <TabelaProcessos processos={processos} />
           </div>
         </div>

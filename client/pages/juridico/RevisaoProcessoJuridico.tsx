@@ -11,6 +11,7 @@ import RichTextEditor from "@/components/RichTextEditor";
 import { useToast } from "@/hooks/use-toast";
 import { fetchProcessById } from "@/lib/api";
 import { errorMessage } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 
 export default function RevisaoProcessoJuridico() {
   const navegar = useNavigate();
@@ -70,6 +71,17 @@ export default function RevisaoProcessoJuridico() {
       } as any;
       const { updateProcess } = await import("@/lib/api");
       await updateProcess(idProcesso, patch as any);
+
+      // Após salvar a finalização, chamar Edge Function para enviar relatório
+      try {
+        await supabase.functions.invoke("send-process-report", {
+          body: { process_id: idProcesso },
+        });
+      } catch (fx) {
+        // Notificar, mas não bloquear o fluxo do usuário
+        toast({ title: "Relatório não enviado automaticamente", description: `Você pode reenviar depois. ${errorMessage(fx)}` });
+      }
+
       toast({ title: "Análise finalizada", description: "Decisão salva com sucesso." });
       navegar("/juridico");
     } catch (e: any) {
