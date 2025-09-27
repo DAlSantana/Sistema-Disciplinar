@@ -139,7 +139,6 @@ export default function GestorRegistrarDesvio() {
       setSelectedMisconductTypeId("");
       setClassificacao("");
       setDescricao("");
-      setDiasSuspensao("");
       setAnexos([]);
       setHistory([]);
     } catch (err: any) {
