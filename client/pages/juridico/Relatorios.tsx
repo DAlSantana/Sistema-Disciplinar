@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fetchProcesses } from "@/lib/api";
+import { fetchProcesses, fetchSuspensionsByDateRange } from "@/lib/api";
 import {
   PieChart,
   Pie,
@@ -53,16 +53,28 @@ export default function Relatorios() {
   const [statusFiltro, setStatusFiltro] = useState<(typeof statusOpcoes)[number]>("todos");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
+  const [apenasSuspensoes, setApenasSuspensoes] = useState(false);
 
   const [processos, setProcessos] = useState<{ id: string; funcionario: string; tipoDesvio: string; classificacao: Classificacao; dataAbertura: string; status: StatusAtual; resolucao?: string }[]>([]);
 
   useEffect(() => {
     let mounted = true;
-    fetchProcesses().then((data) => {
-      if (mounted) setProcessos((data as any) || []);
-    });
+    const carregar = async () => {
+      try {
+        if (apenasSuspensoes && (dataInicio || dataFim)) {
+          const lista = await fetchSuspensionsByDateRange(dataInicio || undefined, dataFim || undefined);
+          if (mounted) setProcessos((lista as any) || []);
+        } else {
+          const data = await fetchProcesses();
+          if (mounted) setProcessos((data as any) || []);
+        }
+      } catch {
+        if (mounted) setProcessos([]);
+      }
+    };
+    carregar();
     return () => { mounted = false; };
-  }, []);
+  }, [apenasSuspensoes, dataInicio, dataFim]);
 
   const dados = useMemo(() => {
     const base = processos;
@@ -194,6 +206,10 @@ export default function Relatorios() {
                           ))}
                         </SelectContent>
                       </Select>
+                      <div className="mt-3 flex items-center gap-2">
+                        <input id="only-susp" type="checkbox" checked={apenasSuspensoes} onChange={(e) => setApenasSuspensoes(e.target.checked)} />
+                        <label htmlFor="only-susp" className="text-xs text-sis-secondary-text">Apenas Suspensões (usa filtros de data)</label>
+                      </div>
                     </div>
 
                     {/* Período */}
