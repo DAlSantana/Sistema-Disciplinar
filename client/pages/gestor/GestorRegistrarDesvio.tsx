@@ -128,11 +128,6 @@ export default function GestorRegistrarDesvio() {
         criado_por_user_id: userId,
       };
 
-      if (diasSuspensao && diasSuspensao.trim() !== "") {
-        const n = Number(diasSuspensao);
-        if (!Number.isNaN(n) && n > 0) payload.dias_de_suspensao = n;
-      }
-
       const { error } = await supabase.from("processes").insert(payload);
       if (error) throw error;
 
