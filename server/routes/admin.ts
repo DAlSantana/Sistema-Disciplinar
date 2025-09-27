@@ -888,17 +888,27 @@ export const saveUserOverrides: RequestHandler = async (req, res) => {
       const rows: any[] = [];
       for (const o of overrides as any[]) {
         let pid = (o as any).permission_id ?? null;
+        let pname: string | undefined;
         if (!pid) {
-          const pname = (o as any).permission_name || (o as any).permission;
+          pname = (o as any).permission_name || (o as any).permission;
           if (typeof pname === 'string' && pname.trim() !== '') {
             try {
               const rid = await findPermissionId(supabaseAdmin, pname);
               if (rid) pid = rid;
             } catch {}
+            if (!pid) {
+              try {
+                // Create the permission if missing, then resolve id
+                const ensured = await ensurePermissionId(supabaseAdmin, pname);
+                if (ensured) pid = ensured;
+              } catch (e) {
+                console.warn('Falha ao garantir permission id', { pname, e });
+              }
+            }
           }
         }
         if (!pid) {
-          throw new Error(`permission_id ausente e não resolvível para '${(o as any).permission_name || (o as any).permission || ''}'`);
+          throw new Error(`permission_id ausente e não resolvível para '${pname || (o as any).permission_name || (o as any).permission || ''}'`);
         }
         rows.push({ user_id: userId, permission_id: pid, action: (o as any).action });
       }
