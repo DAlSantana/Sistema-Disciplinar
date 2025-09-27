@@ -11,7 +11,6 @@ export default function GestorRegistrarDesvio() {
   const [periodoInicio, setPeriodoInicio] = useState("");
   const [periodoFim, setPeriodoFim] = useState("");
   const [selectedMisconductTypeId, setSelectedMisconductTypeId] = useState("");
-  const [diasSuspensao, setDiasSuspensao] = useState("");
   const [classificacao, setClassificacao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [anexos, setAnexos] = useState<File[]>([]);
