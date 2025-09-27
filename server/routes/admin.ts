@@ -815,7 +815,7 @@ async function selectUserOverridesFlexible(db: any, userId: string): Promise<Use
   for (const fn of trySelects) {
     try {
       const { data, error } = await fn();
-      if (!error && Array.isArray(data)) {
+      if (!error && Array.isArray(data) && data.length > 0) {
         return (data as any[]).map((r: any) => {
           const action: 'grant' | 'revoke' = ((r.action || '').toLowerCase() === 'revoke' ? 'revoke' : 'grant');
           return {
