@@ -126,9 +126,11 @@ export async function fetchUsers() {
 }
 
 export type PerfilUsuario = "administrador" | "gestor" | "juridico" | "funcionario";
-export async function updateProfile(id: string, patch: { nome?: string; perfil?: PerfilUsuario; ativo?: boolean }) {
-  const { error } = await supabase.from("profiles").update(patch as any).eq("id", id);
-  if (error) throw error;
+export async function updateUser(id: string, patch: { nome?: string; perfil?: PerfilUsuario; ativo?: boolean; email?: string }) {
+  await api(`/api/admin/users/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
 }
 
 export async function updateProcess(id: string, patch: Partial<ProcessoAPI>) {
@@ -240,6 +242,11 @@ export async function fetchUserOverrides(userId: string): Promise<UserOverride[]
 }
 
 export async function saveUserOverrides(userId: string, overrides: UserOverride[]): Promise<void> {
+  try {
+    // Debug log to inspect payload being sent
+    // eslint-disable-next-line no-console
+    console.log('Array de "overrides" sendo enviado para a API:', overrides);
+  } catch {}
   await api(`/api/admin/user-overrides/${encodeURIComponent(userId)}`, {
     method: "POST",
     body: JSON.stringify({ overrides }),

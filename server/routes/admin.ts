@@ -875,20 +875,76 @@ export const saveUserOverrides: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: 'Dados de entrada inválidos.' });
     }
 
-    await supabaseAdmin.from('user_permission_overrides').delete().eq('user_id', userId);
+    const { error: deleteError } = await supabaseAdmin
+      .from('user_permission_overrides')
+      .delete()
+      .eq('user_id', userId);
+    if (deleteError) {
+      console.error('Erro ao deletar permissões antigas:', deleteError);
+      throw deleteError;
+    }
 
     if (overrides.length > 0) {
-      const dataToInsert = overrides.map((o: any) => ({
-        user_id: userId,
-        permission_id: o.permission_id,
-        action: o.action,
+      const normalized = (overrides as any[]).map((o) => ({
+        permission_name: (o as any).permission_name || (o as any).permission,
+        action: (o as any).action,
       }));
-      await supabaseAdmin.from('user_permission_overrides').insert(dataToInsert as any);
+      const result = await replaceUserOverridesFlexible(supabaseAdmin as any, userId, normalized as any);
+      if (!result.ok) {
+        console.error('Falha ao salvar overrides (flexible):', result.message);
+        throw new Error(result.message || 'Falha ao salvar permissões');
+      }
     }
 
     return res.status(200).json({ message: 'Permissões do usuário atualizadas com sucesso!' });
   } catch (error: any) {
-    return res.status(500).json({ error: 'Erro interno do servidor: ' + (error?.message || String(error)) });
+    console.error('ERRO REAL DO SUPABASE:', error);
+    return res.status(500).json({ error: 'Erro ao salvar no banco de dados: ' + (error?.message || String(error)) });
+  }
+};
+
+// ------------------------- Users update -------------------------
+
+export const updateUserProfile: RequestHandler = async (req, res) => {
+  try {
+    const ctx = await ensureAdmin(req, res);
+    if (!ctx) return;
+    const admin = ctx.admin;
+    const db = ctx.db;
+
+    const userId = String((req.params as any)?.userId || (req.params as any)?.id || '').trim();
+    if (!userId) return res.status(400).json({ error: 'userId path param required' });
+
+    const body = req.body as any;
+    const patch: any = {};
+    if (typeof body?.nome === 'string') patch.nome = body.nome;
+    if (typeof body?.perfil === 'string') patch.perfil = body.perfil;
+    if (typeof body?.ativo === 'boolean') patch.ativo = body.ativo;
+
+    if (Object.keys(patch).length === 0 && typeof body?.email !== 'string') {
+      return res.status(400).json({ error: 'Nada para atualizar.' });
+    }
+
+    if (Object.keys(patch).length > 0) {
+      const { error: updErr } = await db.from('profiles').update(patch).eq('id', userId);
+      if (updErr) return res.status(400).json({ error: updErr.message || String(updErr) });
+    }
+
+    if (typeof body?.email === 'string' && admin) {
+      try {
+        // @ts-ignore supabase admin typings in this environment
+        const { error: uErr } = await (admin.auth as any).admin.updateUserById(userId, { email: body.email });
+        if (uErr) {
+          console.warn('Falha ao atualizar e-mail do auth user:', uErr);
+        }
+      } catch (e) {
+        console.warn('Exceção ao atualizar e-mail do auth user:', e);
+      }
+    }
+
+    return res.json({ ok: true });
+  } catch (e: any) {
+    return res.status(500).json({ error: e?.message || String(e) });
   }
 };
 
