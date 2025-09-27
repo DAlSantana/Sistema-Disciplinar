@@ -185,7 +185,11 @@ export default function Login() {
               </div>
 
               <div className="flex justify-end">
-                <button type="button" className="font-roboto text-sm font-medium text-sis-secondary-text hover:text-sis-blue focus:outline-none focus:text-sis-blue xl:leading-[22px]">
+                <button
+                  type="button"
+                  onClick={() => navigate("/autenticacao/esqueci-senha")}
+                  className="font-roboto text-sm font-medium text-sis-secondary-text hover:text-sis-blue focus:outline-none focus:text-sis-blue xl:leading-[22px]"
+                >
                   Esqueceu sua senha?
                 </button>
               </div>
