@@ -153,37 +153,23 @@ function buildPermissionCandidates(name: string): string[] {
 async function findPermissionId(db: any, permissionName: string) {
   const candidates = buildPermissionCandidates(permissionName);
   console.info('[profile-permissions] lookup candidates', { permissionName, candidates });
+  // Prefer schema with only 'name' column
   try {
-    const { data: byName, error: e1 } = await db.from('permissions').select('id,name,permission').in('name', candidates).limit(1);
-    if (e1) console.error('[profile-permissions] by name error', e1);
+    const { data: byName } = await db.from('permissions').select('id,name').in('name', candidates).limit(1);
     const id1 = Array.isArray(byName) && byName[0]?.id;
     if (id1) {
       console.info('[profile-permissions] matched by name', { id: id1, row: byName?.[0] });
       return id1;
     }
-  } catch (e) {
-    console.error('[profile-permissions] by name exception', e);
-  }
+  } catch {}
+  // Fallback OR on name only (avoid non-existent columns)
   try {
-    const { data: byPerm, error: e2 } = await db.from('permissions').select('id,name,permission').in('permission', candidates).limit(1);
-    if (e2) console.error('[profile-permissions] by permission error', e2);
-    const id2 = Array.isArray(byPerm) && byPerm[0]?.id;
-    if (id2) {
-      console.info('[profile-permissions] matched by permission', { id: id2, row: byPerm?.[0] });
-      return id2;
-    }
-  } catch (e) {
-    console.error('[profile-permissions] by permission exception', e);
-  }
-  try {
-    const orParts = candidates.flatMap((n) => [`name.eq.${n}`, `permission.eq.${n}`]).join(',');
-    const { data } = await db.from('permissions').select('id,name,permission').or(orParts).limit(1);
+    const orParts = candidates.map((n) => `name.eq.${n}`).join(',');
+    const { data } = await db.from('permissions').select('id,name').or(orParts).limit(1);
     const id3 = Array.isArray(data) && data[0]?.id;
     console.info('[profile-permissions] fallback or result', { count: Array.isArray(data) ? data.length : 0, id3, orParts });
     if (id3) return id3;
-  } catch (e) {
-    console.error('[profile-permissions] fallback or exception', e);
-  }
+  } catch {}
   return null;
 }
 
@@ -191,8 +177,8 @@ async function ensurePermissionId(db: any, permissionName: string) {
   let id = await findPermissionId(db, permissionName);
   if (id) return id;
   try {
-    // Try to create the permission if it doesn't exist yet
-    await db.from('permissions').insert({ name: permissionName, permission: permissionName } as any);
+    // Try to create the permission if it doesn't exist yet (schema with only 'name')
+    await db.from('permissions').insert({ name: permissionName } as any);
   } catch {}
   id = await findPermissionId(db, permissionName);
   if (!id) throw new Error(`permission not found: ${permissionName}`);
@@ -295,14 +281,14 @@ async function readProfilePermissionsFlexible(db: any): Promise<Record<string, s
       if (Object.keys(by).length) return by;
     }
   } catch {}
-  // Try join to permissions table
+  // Try join to permissions table (schema with permission_id -> permissions.id and permissions.name)
   try {
-    const { data, error } = await db.from('profile_permissions').select('perfil, profile_name, permission, permission_id, permissions ( name, permission )');
-    if (!error && Array.isArray(data)) {
+    const { data } = await db.from('profile_permissions').select('perfil, profile_name, permission_id, permissions ( name )');
+    if (Array.isArray(data)) {
       const by: Record<string, string[]> = {};
       for (const r of data as any[]) {
         const p = r.perfil || r.profile_name || 'unknown';
-        const perm = r.permission || r?.permissions?.name || r?.permissions?.permission || '';
+        const perm = r?.permissions?.name || '';
         if (!perm) continue;
         (by[p] = by[p] || []).push(perm);
       }
@@ -538,16 +524,116 @@ export const listRecentActivities: RequestHandler = async (_req, res) => {
 
 // ------------------------- Permissions management -------------------------
 
+export const replaceProfilePermissions: RequestHandler = async (req, res) => {
+  if ((req.method || '').toUpperCase() !== 'POST') {
+    return res.status(405).json({ error: 'Método não permitido.' });
+  }
+  try {
+    const url = sanitizeEnv(process.env.SUPABASE_URL || (process.env as any).VITE_SUPABASE_URL);
+    const serviceKey = sanitizeEnv(process.env.SUPABASE_SERVICE_ROLE_KEY);
+    if (!url || !serviceKey) {
+      return res.status(501).json({ error: 'Operação administrativa requer SUPABASE_SERVICE_ROLE_KEY no servidor' });
+    }
+    const supabaseAdmin = createClient(url, serviceKey, { auth: { persistSession: false } });
+
+    // Verifica admin via token e perfil
+    const auth = String(req.headers.authorization || '');
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+    if (!token) return res.status(401).json({ error: 'Não autorizado.' });
+
+    const { data: userData } = await (supabaseAdmin as any).auth.getUser(token);
+    const user = (userData as any)?.user || null;
+    if (!user) return res.status(401).json({ error: 'Token inválido.' });
+
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('perfil')
+      .eq('id', user.id)
+      .maybeSingle();
+    if ((profile as any)?.perfil !== 'administrador') {
+      return res.status(403).json({ error: 'Acesso proibido: somente administradores.' });
+    }
+
+    const body = req.body as any;
+    const profile_name = String(body?.profile_name || '').trim();
+    const permissions = Array.isArray(body?.permissions) ? body.permissions : null;
+
+    if (!profile_name || !Array.isArray(permissions)) {
+      return res.status(400).json({ error: 'Dados de entrada inválidos.' });
+    }
+
+    // Busca IDs das permissões pelos nomes
+    const { data: dbPermissions, error: selErr } = await supabaseAdmin
+      .from('permissions')
+      .select('id, name')
+      .in('name', permissions);
+    if (selErr) return res.status(400).json({ error: selErr.message });
+
+    const found = Array.isArray(dbPermissions) ? dbPermissions : [];
+    if (found.length !== permissions.length) {
+      const missing = permissions.find((p: string) => !found.some((ep: any) => ep.name === p));
+      return res.status(400).json({ error: `Permissão não encontrada no banco: ${missing}` });
+    }
+    const permissionIds = found.map((p: any) => p.id);
+
+    // 1) Apaga permissões antigas do perfil (tenta por profile_name e fallback para coluna 'perfil')
+    let lastErr: any = null;
+    try {
+      const { error } = await supabaseAdmin.from('profile_permissions').delete().eq('profile_name', profile_name);
+      if (error) lastErr = error; else lastErr = null;
+    } catch (e) { lastErr = e; }
+    if (lastErr) {
+      try {
+        const { error } = await supabaseAdmin.from('profile_permissions').delete().eq('perfil', profile_name);
+        if (error) lastErr = error; else lastErr = null;
+      } catch (e) { lastErr = e; }
+    }
+    if (lastErr) return res.status(400).json({ error: lastErr?.message || String(lastErr) });
+
+    // 2) Insere novo conjunto
+    if (permissionIds.length > 0) {
+      const dataToInsertA = permissionIds.map((id: any) => ({ profile_name, permission_id: id }));
+      const dataToInsertB = permissionIds.map((id: any) => ({ perfil: profile_name, permission_id: id }));
+      // tenta com profile_name
+      let insErr: any = null;
+      try {
+        const { error } = await supabaseAdmin.from('profile_permissions').insert(dataToInsertA as any);
+        if (error) insErr = error; else insErr = null;
+      } catch (e) { insErr = e; }
+      if (insErr) {
+        try {
+          const { error } = await supabaseAdmin.from('profile_permissions').insert(dataToInsertB as any);
+          if (error) insErr = error; else insErr = null;
+        } catch (e) { insErr = e; }
+      }
+      if (insErr) return res.status(400).json({ error: insErr?.message || String(insErr) });
+    }
+
+    return res.status(200).json({ message: `Permissões para o perfil '${profile_name}' atualizadas com sucesso!` });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Erro ao salvar permissões do perfil: ' + (error?.message || String(error)) });
+  }
+};
+
 export const listPermissions: RequestHandler = async (_req, res) => {
   try {
     const ctx = await ensureAdmin(_req, res);
     if (!ctx) return;
     const db = ctx.db;
 
+    // Prefer schema with only 'name' column
     try {
-      const { data, error } = await db.from('permissions').select('permission, name');
-      if (!error && Array.isArray(data) && data.length > 0) {
-        const names = (data as any).map((d: any) => d.permission || d.name).filter(Boolean);
+      const { data } = await db.from('permissions').select('name');
+      if (Array.isArray(data) && data.length > 0) {
+        const names = (data as any).map((d: any) => d.name).filter(Boolean);
+        if (names.length) return res.json(names);
+      }
+    } catch {}
+    // Fallback schema where column might be called 'permission'
+    try {
+      const { data } = await db.from('permissions').select('permission');
+      if (Array.isArray(data) && data.length > 0) {
+        const names = (data as any).map((d: any) => d.permission).filter(Boolean);
         if (names.length) return res.json(names);
       }
     } catch {}
@@ -723,19 +809,19 @@ async function selectUserOverridesFlexible(db: any, userId: string): Promise<Use
   const trySelects = [
     async () => db.from('user_permission_overrides').select('permission_name, action').eq('user_id', userId),
     async () => db.from('user_permission_overrides').select('permission, action').eq('user_id', userId),
+    async () => db.from('user_permission_overrides').select('permission_id, action, permissions ( name )').eq('user_id', userId),
     async () => db.from('user_overrides').select('permission_name, action').eq('user_id', userId),
     async () => db.from('user_overrides').select('permission, action').eq('user_id', userId),
+    async () => db.from('user_overrides').select('permission_id, action, permissions ( name )').eq('user_id', userId),
   ];
   for (const fn of trySelects) {
     try {
       const { data, error } = await fn();
-      if (!error && Array.isArray(data)) {
+      if (!error && Array.isArray(data) && data.length > 0) {
         return (data as any[]).map((r: any) => {
           const action: 'grant' | 'revoke' = ((r.action || '').toLowerCase() === 'revoke' ? 'revoke' : 'grant');
-          return {
-            permission_name: r.permission_name || r.permission,
-            action,
-          } as UserOverride;
+          const permission_name = r.permission_name || r.permission || r?.permissions?.name;
+          return { permission_name, action } as UserOverride;
         }).filter((r) => r.permission_name);
       }
     } catch {}

@@ -220,6 +220,13 @@ export async function setProfilePermission(perfil: PerfilUsuario, permission: st
   }
 }
 
+export async function saveProfilePermissions(perfil: PerfilUsuario, permissions: string[]): Promise<void> {
+  await api("/api/admin/profile-permissions", {
+    method: "POST",
+    body: JSON.stringify({ profile_name: perfil, permissions }),
+  });
+}
+
 export async function fetchUserPermissions(userId: string): Promise<string[]> {
   return api<string[]>(`/api/admin/user-permissions/${encodeURIComponent(userId)}`);
 }
