@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
