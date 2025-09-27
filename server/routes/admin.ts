@@ -885,40 +885,14 @@ export const saveUserOverrides: RequestHandler = async (req, res) => {
     }
 
     if (overrides.length > 0) {
-      const rows: any[] = [];
-      for (const o of overrides as any[]) {
-        let pid = (o as any).permission_id ?? null;
-        let pname: string | undefined;
-        if (!pid) {
-          pname = (o as any).permission_name || (o as any).permission;
-          if (typeof pname === 'string' && pname.trim() !== '') {
-            try {
-              const rid = await findPermissionId(supabaseAdmin, pname);
-              if (rid) pid = rid;
-            } catch {}
-            if (!pid) {
-              try {
-                // Create the permission if missing, then resolve id
-                const ensured = await ensurePermissionId(supabaseAdmin, pname);
-                if (ensured) pid = ensured;
-              } catch (e) {
-                console.warn('Falha ao garantir permission id', { pname, e });
-              }
-            }
-          }
-        }
-        if (!pid) {
-          throw new Error(`permission_id ausente e não resolvível para '${pname || (o as any).permission_name || (o as any).permission || ''}'`);
-        }
-        rows.push({ user_id: userId, permission_id: pid, action: (o as any).action });
-      }
-
-      const { error: insertError } = await supabaseAdmin
-        .from('user_permission_overrides')
-        .insert(rows as any);
-      if (insertError) {
-        console.error('Erro ao inserir novas permissões:', insertError);
-        throw insertError;
+      const normalized = (overrides as any[]).map((o) => ({
+        permission_name: (o as any).permission_name || (o as any).permission,
+        action: (o as any).action,
+      }));
+      const result = await replaceUserOverridesFlexible(supabaseAdmin as any, userId, normalized as any);
+      if (!result.ok) {
+        console.error('Falha ao salvar overrides (flexible):', result.message);
+        throw new Error(result.message || 'Falha ao salvar permissões');
       }
     }
 
