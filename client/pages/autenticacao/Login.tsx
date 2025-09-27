@@ -137,7 +137,7 @@ export default function Login() {
             <div className="mb-6 flex items-center sm:mb-8">
               <img
                 className="h-10 w-10 flex-shrink-0 sm:h-12 sm:w-12"
-                src="https://cdn.builder.io/api/v1/image/assets%2Fd37e8caa844a480690999b86d10efac5%2F21c13cf313cb4f499007dc360015bfce?format=webp&width=96"
+                src="/logo.svg"
                 alt="Logo SisDisciplinar"
               />
               <h1 className="ml-2 font-open-sans text-2xl font-bold italic text-sis-blue sm:ml-3 sm:text-3xl xl:text-[38px] xl:leading-[38px]">SisDisciplinar</h1>
