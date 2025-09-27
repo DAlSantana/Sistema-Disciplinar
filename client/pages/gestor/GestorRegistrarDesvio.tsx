@@ -315,25 +315,6 @@ export default function GestorRegistrarDesvio() {
                 </div>
               </div>
 
-              {/* Dias de Suspensão (condicional) */}
-              {(() => {
-                const tipo = misconductTypes.find((t) => String(t.id) === selectedMisconductTypeId)?.name || "";
-                const exibir = /suspens/i.test(tipo);
-                return exibir ? (
-                  <div>
-                    <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">Dias de Suspensão</label>
-                    <input
-                      type="number"
-                      min={1}
-                      step={1}
-                      value={diasSuspensao}
-                      onChange={(e) => setDiasSuspensao(e.target.value)}
-                      placeholder="Ex.: 1, 3, 5"
-                      className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
-                    />
-                  </div>
-                ) : null;
-              })()}
 
               {/* Descrição */}
               <div>
@@ -379,7 +360,6 @@ export default function GestorRegistrarDesvio() {
                     setSelectedMisconductTypeId("");
                     setClassificacao("");
                     setDescricao("");
-                    setDiasSuspensao("");
                     setAnexos([]);
                   }}
                   className="rounded-md border border-sis-border bg-white px-4 py-2 font-roboto text-sm text-sis-dark-text hover:bg-gray-50"
