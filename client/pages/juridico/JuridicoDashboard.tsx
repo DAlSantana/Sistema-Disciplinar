@@ -64,7 +64,7 @@ const metricDefinitions: readonly MetricDefinition[] = [
   {
     key: "analise",
     titulo: "Casos em Sindicância",
-    descricao: "Atualmente aguardando revisão.",
+    descricao: "Atualmente em sindicância.",
     icon: (
       <svg
         className="h-5 w-5"
@@ -353,7 +353,7 @@ export default function JuridicoDashboard() {
                 {/* Processos Aguardando Análise Jurídica (Sindicância) */}
                 <Card className="border-sis-border bg-white">
                   <CardHeader>
-                    <CardTitle className="text-xl">Processos Aguardando Análise Jurídica (Sindicância)</CardTitle>
+                    <CardTitle className="text-xl">Processos Aguardando Sindicância</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <AwaitingLegalTable processos={processos} loading={loadingProcessos} />
