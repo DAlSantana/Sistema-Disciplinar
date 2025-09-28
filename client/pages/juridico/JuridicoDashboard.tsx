@@ -16,8 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type StatusJuridico = "Em Revisão" | "Pendente" | "Finalizado" | "Aguardando Análise";
-
 type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 
 type ProcessoJuridico = {
@@ -135,19 +133,6 @@ const percentFormatter = new Intl.NumberFormat("pt-BR", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-
-const getStatusJuridicoClasses = (s: StatusJuridico) => {
-  switch (s) {
-    case "Em Revisão":
-      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
-    case "Pendente":
-      return "bg-orange-100 border-orange-200 text-orange-800";
-    case "Finalizado":
-      return "bg-status-green-bg border-status-green-border text-status-green-text";
-    case "Aguardando Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
-  }
-};
 
 function coerceStatus(raw?: string | null): StatusAtual {
   const normalized = (raw ?? "")
