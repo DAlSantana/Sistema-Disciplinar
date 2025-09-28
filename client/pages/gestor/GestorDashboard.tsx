@@ -156,16 +156,32 @@ export default function GestorDashboard() {
                   <CardTitle>Principais Desvios Ofensores</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {topDesvios.length === 0 ? (
+                  {loading ? (
+                    <div className="text-sm text-sis-secondary-text">Carregando...</div>
+                  ) : topDesvios.length === 0 ? (
                     <div className="text-sm text-sis-secondary-text">Sem dados disponíveis.</div>
                   ) : (
-                    <ul className="space-y-2">
-                      {topDesvios.map((it, idx) => (
-                        <li key={idx} className="flex items-center justify-between text-sm">
-                          <span className="truncate pr-4">{it.name}</span>
-                          <span className="font-medium">{it.count}</span>
-                        </li>
-                      ))}
+                    <ul className="space-y-3">
+                      {(() => {
+                        const max = Math.max(...topDesvios.map((t) => t.count));
+                        const total = topDesvios.reduce((a, b) => a + b.count, 0) || 1;
+                        return topDesvios.map((it, idx) => {
+                          const pct = max ? Math.round((it.count / max) * 100) : 0;
+                          const share = Math.round((it.count / total) * 100);
+                          return (
+                            <li key={idx} className="text-sm">
+                              <div className="mb-1 flex items-center justify-between">
+                                <span className="truncate pr-4 text-sis-dark-text">{it.name}</span>
+                                <span className="font-medium text-sis-dark-text">{it.count}</span>
+                              </div>
+                              <div className="h-2 w-full overflow-hidden rounded bg-gray-100">
+                                <div className="h-2 rounded bg-sis-blue" style={{ width: `${pct}%` }} />
+                              </div>
+                              <div className="mt-1 text-[11px] text-sis-secondary-text">{share}% do top 5</div>
+                            </li>
+                          );
+                        });
+                      })()}
                     </ul>
                   )}
                 </CardContent>
