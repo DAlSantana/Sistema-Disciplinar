@@ -54,6 +54,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "registrar-desvio",
       nome: "Registrar Desvio",
+      to: SIDEBAR_ROUTES["registrar-desvio"],
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
