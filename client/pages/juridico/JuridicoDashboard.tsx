@@ -197,7 +197,7 @@ function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridic
           ) : aguardando.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="py-10 text-center text-sis-secondary-text">
-                Nenhum processo aguardando análise jurídica.
+                Nenhum processo aguardando sindicância.
               </TableCell>
             </TableRow>
           ) : (
@@ -350,7 +350,7 @@ export default function JuridicoDashboard() {
                   Registrar Novo Desvio
                 </Button>
 
-                {/* Processos Aguardando Análise Jurídica (Sindicância) */}
+                {/* Processos Aguardando Sindicância */}
                 <Card className="border-sis-border bg-white">
                   <CardHeader>
                     <CardTitle className="text-xl">Processos Aguardando Sindicância</CardTitle>
