@@ -16,7 +16,7 @@ export default function CartaoMetrica({
   corValor = "text-sis-blue"
 }: CartaoMetricaProps) {
   return (
-    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+    <div className="w-full h-full rounded-lg border bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">
           {titulo}
