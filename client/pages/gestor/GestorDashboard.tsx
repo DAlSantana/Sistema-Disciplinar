@@ -90,7 +90,7 @@ export default function GestorDashboard() {
         try {
           const map = new Map<string, number>();
           for (const p of itens) {
-            const key = p.tipoDesvio || "—";
+            const key = (p.tipoDesvio && p.tipoDesvio.trim()) ? p.tipoDesvio.trim() : "Não informado";
             map.set(key, (map.get(key) || 0) + 1);
           }
           const localTop = Array.from(map.entries())
@@ -131,7 +131,11 @@ export default function GestorDashboard() {
         if (error) return;
         const arr = Array.isArray(data) ? data : data ? [data] : [];
         const mapped = arr
-          .map((r: any) => ({ name: r.name ?? r.tipo ?? r.misconduct_type ?? "—", count: Number(r.count ?? r.total ?? 0) }))
+          .map((r: any) => {
+            const raw = (r.name ?? r.tipo ?? r.misconduct_type ?? "").toString().trim();
+            const name = raw.length === 0 ? "Não informado" : raw;
+            return { name, count: Number(r.count ?? r.total ?? 0) };
+          })
           .slice(0, 5);
         setTopDesvios(mapped);
       })
