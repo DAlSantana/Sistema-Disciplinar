@@ -68,6 +68,16 @@ export async function fetchEmployeeById(matriculaOrId: string) {
   return employeesMapped.find((e) => e.id === (emp.matricula ?? emp.id));
 }
 
+function normalizeStatus(raw?: string | null): string {
+  const v = (raw ?? "Em_Analise").toString().replace(/_/g, " ").trim();
+  const base = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (base.includes("analise")) return "Em Análise";
+  if (base.includes("sindic")) return "Sindicância";
+  if (base.includes("assinatura")) return "Aguardando Assinatura";
+  if (base.includes("final")) return "Finalizado";
+  return v;
+}
+
 export async function fetchProcesses() {
   // Read directly from Supabase to avoid serverless 500s
   const { data: processes } = await supabase
@@ -84,7 +94,7 @@ export async function fetchProcesses() {
     classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
-    status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
+    status: normalizeStatus(p.status) as any,
     resolucao: p.resolucao ?? "",
   }));
 }
