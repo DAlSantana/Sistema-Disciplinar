@@ -1,4 +1,4 @@
-export type StatusJuridico = "Em Revisão" | "Pendente" | "Finalizado" | "Aguardando Análise";
+export type StatusJuridico = "Sindicância" | "Pendente" | "Finalizado" | "Aguardando Análise";
 
 export interface ProcessoJuridico {
   id: string;
@@ -18,7 +18,7 @@ export const processosJuridicosMock: ProcessoJuridico[] = [
     id: "PROC-00123",
     assunto: "Ação Trabalhista - João Silva",
     vencimento: "2024-07-15",
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-00124", 
@@ -30,7 +30,7 @@ export const processosJuridicosMock: ProcessoJuridico[] = [
     id: "PROC-00125",
     assunto: "Disputa Comercial - Cliente Y", 
     vencimento: "2024-07-20",
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-00126",
@@ -48,7 +48,7 @@ export const processosJuridicosMock: ProcessoJuridico[] = [
     id: "PROC-00128",
     assunto: "Propriedade Intelectual - Registro Z",
     vencimento: "2024-07-28",
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-00129",
