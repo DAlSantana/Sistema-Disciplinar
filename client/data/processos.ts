@@ -1,6 +1,5 @@
 export type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
 export type StatusAtual =
-  | "Em Análise"
   | "Sindicância"
   | "Aguardando Assinatura"
   | "Finalizado";
