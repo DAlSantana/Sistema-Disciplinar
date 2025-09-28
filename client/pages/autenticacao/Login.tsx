@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
@@ -7,6 +8,7 @@ import { errorMessage } from "@/lib/utils";
 export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
+  const [showSenha, setShowSenha] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -164,13 +166,24 @@ export default function Login() {
 
               <div className="space-y-3.5">
                 <label className="block font-roboto text-xs font-medium text-sis-dark-text xl:leading-5">Senha</label>
-                <input
-                  type="password"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
-                  placeholder="••••••"
-                />
+                <div className="relative">
+                  <input
+                    type={showSenha ? "text" : "password"}
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
+                    placeholder="••••••"
+                    aria-label="Senha"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSenha((s) => !s)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-sis-secondary-text hover:text-sis-blue focus:outline-none"
+                    aria-label={showSenha ? "Esconder senha" : "Mostrar senha"}
+                  >
+                    {showSenha ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex justify-end">
