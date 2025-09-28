@@ -90,7 +90,7 @@ export default function AdministradorDashboard() {
           {/* Grid de cartões */}
           <div className="space-y-6">
             {/* Primeira linha - Métricas principais */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
               <CartaoMetrica
                 titulo="Total de Usuários"
                 valor={String(totalUsuarios)}
@@ -118,7 +118,7 @@ export default function AdministradorDashboard() {
 
             {/* Segunda linha - Gráficos */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-lg border bg-white p-5 shadow-sm">
+              <div className="rounded-lg border bg-white p-5 shadow-sm h-full">
                 <h3 className="mb-2 font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Usuários por Perfil</h3>
                 <div className="h-[260px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -133,7 +133,7 @@ export default function AdministradorDashboard() {
                 </div>
               </div>
 
-              <div className="rounded-lg border bg-white p-5 shadow-sm">
+              <div className="rounded-lg border bg-white p-5 shadow-sm h-full">
                 <h3 className="mb-2 font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Logins nos últimos 14 dias</h3>
                 <div className="h-[260px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
