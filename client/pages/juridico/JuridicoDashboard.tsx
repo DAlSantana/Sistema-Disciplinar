@@ -24,6 +24,7 @@ type ProcessoJuridico = {
   tipoDesvio: string;
   classificacao: string;
   dataAbertura: string;
+  createdAt: string | null;
   status: StatusAtual;
   resolucao: string;
 };
@@ -164,7 +165,12 @@ function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridic
   const navigate = useNavigate();
   const aguardando = processos
     .filter((c) => awaitingStatuses.includes(c.status))
-    .sort((a, b) => (a.dataAbertura && b.dataAbertura ? a.dataAbertura.localeCompare(b.dataAbertura) : 0));
+    .sort((a, b) => {
+      if (a.createdAt && b.createdAt) return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (a.createdAt) return -1;
+      if (b.createdAt) return 1;
+      return a.dataAbertura.localeCompare(b.dataAbertura);
+    });
 
   return (
     <div className="rounded-md border border-sis-border">
@@ -238,6 +244,7 @@ export default function JuridicoDashboard() {
           tipoDesvio: p.tipoDesvio,
           classificacao: p.classificacao,
           dataAbertura: p.dataAbertura,
+          createdAt: p.createdAt ?? null,
           status: coerceStatus(p.status),
           resolucao: (p.resolucao ?? "").toString(),
         }));
