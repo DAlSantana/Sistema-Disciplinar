@@ -4,6 +4,56 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { errorMessage } from "@/lib/utils";
 
+const CLASSIFICACAO_OPTIONS = [
+  { value: "Leve", label: "Leve" },
+  { value: "Media", label: "Média" },
+  { value: "Grave", label: "Grave" },
+  { value: "Gravissima", label: "Gravíssima" },
+] as const;
+
+type ClassificacaoValue = (typeof CLASSIFICACAO_OPTIONS)[number]["value"];
+
+function sanitizeClassificationSource(value?: string | null) {
+  if (!value) return "";
+  const toStringValue = value.toString();
+  try {
+    return toStringValue
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z]/g, "");
+  } catch {
+    return toStringValue.toLowerCase().replace(/[^a-z]/g, "");
+  }
+}
+
+function normalizeClassification(raw?: string | null): ClassificacaoValue | undefined {
+  const sanitized = sanitizeClassificationSource(raw);
+  if (!sanitized) return undefined;
+
+  switch (sanitized) {
+    case "leve":
+      return "Leve";
+    case "media":
+      return "Media";
+    case "grave":
+      return "Grave";
+    case "gravissima":
+      return "Gravissima";
+    default:
+      if (sanitized.includes("gravissima")) return "Gravissima";
+      if (sanitized.includes("grave")) return "Grave";
+      if (sanitized.includes("media")) return "Media";
+      if (sanitized.includes("leve")) return "Leve";
+      return undefined;
+  }
+}
+
+function deriveClassificationFromType(type?: { default_classification?: string | null; name?: string | null }): ClassificacaoValue | undefined {
+  if (!type) return undefined;
+  return normalizeClassification(type.default_classification) ?? normalizeClassification(type.name);
+}
+
 export default function GestorRegistrarDesvio() {
   const [funcionarioId, setFuncionarioId] = useState("");
   const [funcionarios, setFuncionarios] = useState<Array<{ id: string; nome: string }>>([]);
@@ -11,7 +61,7 @@ export default function GestorRegistrarDesvio() {
   const [periodoInicio, setPeriodoInicio] = useState("");
   const [periodoFim, setPeriodoFim] = useState("");
   const [selectedMisconductTypeId, setSelectedMisconductTypeId] = useState("");
-  const [classificacao, setClassificacao] = useState("");
+  const [classificacao, setClassificacao] = useState<ClassificacaoValue | "">("");
   const [descricao, setDescricao] = useState("");
   const [anexos, setAnexos] = useState<File[]>([]);
 
@@ -90,7 +140,7 @@ export default function GestorRegistrarDesvio() {
   const enviarFormulario = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!funcionarioId || !periodoInicio || !periodoFim || !selectedMisconductTypeId || !classificacao || !descricao) {
+    if (!funcionarioId || !periodoInicio || !periodoFim || !selectedMisconductTypeId || !descricao) {
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
@@ -115,18 +165,34 @@ export default function GestorRegistrarDesvio() {
         return;
       }
 
-      const genId = () => (typeof crypto !== "undefined" && (crypto as any).randomUUID ? (crypto as any).randomUUID() : ([1e7] as any + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: any) => (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)));
+      const normalizedClassificacao =
+        normalizeClassification(classificacao) ?? deriveClassificationFromType(selectedType);
+
+      if (!normalizedClassificacao) {
+        toast.error("Não foi possível determinar a classificação do desvio. Selecione manualmente.");
+        return;
+      }
+
+      const genId = () =>
+        (typeof crypto !== "undefined" && (crypto as any).randomUUID
+          ? (crypto as any).randomUUID()
+          : ([1e7] as any + -1e3 + -4e3 + -8e3 + -1e11).replace(
+              /[018]/g,
+              (c: any) => (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+            ));
       const payload: any = {
         id: genId(),
         employee_id: funcionarioId,
         misconduct_type_id: selectedMisconductTypeId,
-        classificacao: classificacao === "Média" ? "Media" : classificacao,
+        classificacao: normalizedClassificacao,
         descricao,
         periodo_ocorrencia_inicio: periodoInicio ? new Date(periodoInicio).toISOString() : null,
         periodo_ocorrencia_fim: periodoFim ? new Date(periodoFim).toISOString() : null,
         status: "Em_Analise",
         criado_por_user_id: userId,
       };
+
+      console.log("Dados que estão sendo enviados para o Supabase:", payload);
 
       const { error } = await supabase.from("processes").insert(payload);
       if (error) throw error;
@@ -265,9 +331,8 @@ export default function GestorRegistrarDesvio() {
                       const v = e.target.value;
                       setSelectedMisconductTypeId(v);
                       const found = misconductTypes.find((t) => String(t.id) === v);
-                      if (found && found.default_classification) {
-                        setClassificacao(found.default_classification === 'Media' ? 'Média' : found.default_classification);
-                      }
+                      const derived = deriveClassificationFromType(found);
+                      setClassificacao(derived ?? "");
                     }}
                     className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
                   >
@@ -294,16 +359,17 @@ export default function GestorRegistrarDesvio() {
                   </label>
                   <select
                     value={classificacao}
-                    onChange={(e) => setClassificacao(e.target.value)}
+                    onChange={(e) => setClassificacao(e.target.value as ClassificacaoValue | "")}
                     className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
                   >
                     <option value="" disabled>
                       Selecione...
                     </option>
-                    <option>Leve</option>
-                    <option>Média</option>
-                    <option>Grave</option>
-                    <option>Gravíssima</option>
+                    {CLASSIFICACAO_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
