@@ -1,5 +1,5 @@
 export type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-export type StatusProcesso = "Finalizado" | "Em Análise" | "Sindicância" | "Aguardando Assinatura";
+export type StatusProcesso = "Finalizado" | "Sindicância" | "Aguardando Assinatura";
 
 export interface RegistroDisciplinar {
   id: string;
