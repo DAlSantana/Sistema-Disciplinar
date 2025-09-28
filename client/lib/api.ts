@@ -30,7 +30,7 @@ export async function fetchEmployees() {
   const { data: processes } = await supabase
     .from("processes")
     .select(`
-      id, employee_id, classificacao, resolucao, status, created_at, data_da_ocorrencia,
+      id, employee_id, classificacao, resolucao, status, created_at, periodo_ocorrencia_inicio,
       misconduct_types ( name )
     `);
   const { data: profiles } = await supabase.from("profiles").select("*");
@@ -99,7 +99,7 @@ export async function fetchEmployeeById(matriculaOrId: string) {
   const { data: proc } = await supabase
     .from("processes")
     .select(`
-      id, status, classificacao, resolucao, created_at, data_da_ocorrencia, periodo_ocorrencia_inicio,
+      id, status, classificacao, resolucao, created_at, periodo_ocorrencia_inicio,
       misconduct_types ( name )
     `)
     .eq("employee_id", rawEmp.id);
