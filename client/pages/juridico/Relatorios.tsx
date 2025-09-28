@@ -196,7 +196,7 @@ export default function Relatorios() {
                     <div className="col-span-12 md:col-span-3">
                       <label className="mb-1 block text-xs text-sis-secondary-text">Status</label>
                       <Select value={statusFiltro} onValueChange={(v) => setStatusFiltro(v as any)}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="Todos os Status" /></SelectTrigger>
+                        <SelectTrigger className="w-full"><SelectValue placeholder="TODOS OS STATUS" /></SelectTrigger>
                         <SelectContent>
                           {statusOpcoes.map((s) => (
                             <SelectItem key={s} value={s}>{s === "todos" ? "TODOS OS STATUS" : s}</SelectItem>
