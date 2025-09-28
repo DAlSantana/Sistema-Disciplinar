@@ -336,7 +336,7 @@ export default function GestorRegistrarDesvio() {
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{formatDate((h as any).data_da_ocorrencia ?? h.created_at ?? h.data)}</td>
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{(h as any)?.misconduct_types?.name ?? h.tipo_desvio ?? h.misconduct_type ?? h.tipo ?? '-'}</td>
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{h.classificacao ?? h.classification ?? '-'}</td>
-                            <td className="py-2 pr-4 font-roboto text-sis-dark-text">{h.status ?? '-'}</td>
+                            <td className="py-2 pr-4 font-roboto text-sis-dark-text">{resolveHistoryStatus(h)}</td>
                           </tr>
                         ))}
                       </tbody>
