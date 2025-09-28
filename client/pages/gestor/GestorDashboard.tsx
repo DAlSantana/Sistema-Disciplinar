@@ -7,6 +7,7 @@ import MetricCard from "@/components/MetricCard";
 import TabelaProcessos from "@/components/TabelaProcessos";
 import { fetchProcesses } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type DashboardProc = {
   id: string;
