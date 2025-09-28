@@ -36,6 +36,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "dashboard",
       nome: "Dashboard",
+      to: SIDEBAR_ROUTES.dashboard,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
