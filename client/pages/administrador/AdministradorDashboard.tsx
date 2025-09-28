@@ -90,7 +90,7 @@ export default function AdministradorDashboard() {
           {/* Grid de cartões */}
           <div className="space-y-6">
             {/* Primeira linha - Métricas principais */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <CartaoMetrica
                 titulo="Total de Usuários"
                 valor={String(totalUsuarios)}
@@ -118,8 +118,8 @@ export default function AdministradorDashboard() {
 
             {/* Segunda linha - Gráficos */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-[10px] bg-white p-4 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-                <h3 className="mb-3 font-roboto text-lg font-bold text-sis-dark-text">Usuários por Perfil</h3>
+              <div className="rounded-lg border bg-white p-5 shadow-sm">
+                <h3 className="mb-2 font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Usuários por Perfil</h3>
                 <div className="h-[260px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartUsuariosData}>
@@ -133,8 +133,8 @@ export default function AdministradorDashboard() {
                 </div>
               </div>
 
-              <div className="rounded-[10px] bg-white p-4 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-                <h3 className="mb-3 font-roboto text-lg font-bold text-sis-dark-text">Logins nos últimos 14 dias</h3>
+              <div className="rounded-lg border bg-white p-5 shadow-sm">
+                <h3 className="mb-2 font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Logins nos últimos 14 dias</h3>
                 <div className="h-[260px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={loginsSerie}>
