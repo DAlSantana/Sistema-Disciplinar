@@ -95,6 +95,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "funcionarios",
       nome: "Funcionários",
+      to: SIDEBAR_ROUTES.funcionarios,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
