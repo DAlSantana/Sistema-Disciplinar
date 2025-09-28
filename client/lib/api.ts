@@ -23,6 +23,15 @@ export interface ProcessoAPI {
   created_at?: string | null;
 }
 
+function normalizeClassificacao(raw?: string | null): "Leve" | "Média" | "Grave" | "Gravíssima" {
+  const v = (raw ?? "Leve").toString().replace(/_/g, " ").trim();
+  const base = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (base.includes("gravissima")) return "Gravíssima";
+  if (base.includes("grave")) return "Grave";
+  if (base.includes("media")) return "Média";
+  return "Leve";
+}
+
 export async function fetchEmployees() {
   const { data: employees, error: empErr } = await supabase.from("employees").select("*");
   if (empErr) throw empErr;
@@ -30,7 +39,7 @@ export async function fetchEmployees() {
   const { data: processes } = await supabase
     .from("processes")
     .select(`
-      id, employee_id, classificacao, resolucao, status, created_at, data_da_ocorrencia,
+      id, employee_id, classificacao, resolucao, status, created_at, periodo_ocorrencia_inicio,
       misconduct_types ( name )
     `);
   const { data: profiles } = await supabase.from("profiles").select("*");
@@ -46,12 +55,17 @@ export async function fetchEmployees() {
     gestorDireto: profilesMap.get(e.gestor_id)?.nome ?? "",
     historico:
       (processes || [])
-        .filter((pr) => pr.employee_id === e.id)
+        .filter((pr) => {
+          const empId = e.id; // UUID do employee
+          const empMat = (e as any).matricula; // matrícula do employee (se existir)
+          const prEmp = (pr as any).employee_id ?? (pr as any).employee_matricula ?? (pr as any).employee;
+          return prEmp === empId || (!!empMat && prEmp === empMat);
+        })
         .map((pr) => ({
           id: pr.id,
-          dataOcorrencia: (() => { const d = pr.created_at ?? (pr as any).data_da_ocorrencia ?? pr.createdAt ?? (pr as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
+          dataOcorrencia: (() => { const d = pr.created_at ?? (pr as any).periodo_ocorrencia_inicio ?? (pr as any).data_da_ocorrencia ?? pr.createdAt ?? (pr as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
           tipoDesvio: (pr as any)?.misconduct_types?.name ?? "",
-          classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
+          classificacao: normalizeClassificacao(pr.classificacao),
           medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
           status: normalizeStatus(pr.status) as any,
         })),
@@ -61,11 +75,57 @@ export async function fetchEmployees() {
 }
 
 export async function fetchEmployeeById(matriculaOrId: string) {
-  const { data: employees } = await supabase.from("employees").select("*").or(`matricula.eq.${matriculaOrId},id.eq.${matriculaOrId}`);
-  const emp = employees?.[0];
-  if (!emp) return undefined;
+  // Try by matricula first (most stable for human-entered IDs), then fallback to UUID id
+  let rawEmp: any | undefined;
+  try {
+    const { data: byMatricula } = await supabase
+      .from("employees")
+      .select("*")
+      .eq("matricula", matriculaOrId)
+      .limit(1);
+    rawEmp = byMatricula?.[0];
+  } catch {}
+
+  if (!rawEmp) {
+    try {
+      const { data: byId } = await supabase
+        .from("employees")
+        .select("*")
+        .eq("id", matriculaOrId)
+        .limit(1);
+      rawEmp = byId?.[0];
+    } catch {}
+  }
+
+  if (!rawEmp) return undefined;
+
+  // Start with the mapped base to keep UI fields consistent
   const employeesMapped = await fetchEmployees();
-  return employeesMapped.find((e) => e.id === (emp.matricula ?? emp.id));
+  const base = employeesMapped.find((e) => e.id === (rawEmp.matricula ?? rawEmp.id));
+  if (!base) return undefined;
+
+  // Load processes specifically for this employee UUID to ensure history is populated
+  const { data: proc } = await supabase
+    .from("processes")
+    .select(`
+      id, status, classificacao, resolucao, created_at, periodo_ocorrencia_inicio,
+      misconduct_types ( name )
+    `)
+    .eq("employee_id", rawEmp.id);
+
+  const historico = (proc || []).map((pr: any) => ({
+    id: pr.id,
+    dataOcorrencia: (() => {
+      const d = pr.created_at ?? pr.periodo_ocorrencia_inicio ?? pr.data_da_ocorrencia ?? pr.createdAt ?? pr.dataOcorrencia;
+      return d ? new Date(d).toLocaleDateString() : "";
+    })(),
+    tipoDesvio: pr?.misconduct_types?.name ?? "",
+    classificacao: normalizeClassificacao(pr.classificacao),
+    medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
+    status: normalizeStatus(pr.status) as any,
+  }));
+
+  return { ...base, historico } as any;
 }
 
 function normalizeStatus(raw?: string | null): string {
@@ -91,7 +151,7 @@ export async function fetchProcesses() {
     id: p.id,
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
-    classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
+    classificacao: normalizeClassificacao(p.classificacao),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
     status: normalizeStatus(p.status) as any,
@@ -144,7 +204,7 @@ export async function fetchProcessById(id: string) {
     id: p.id,
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
-    classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
+    classificacao: normalizeClassificacao(p.classificacao),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
     status: normalizeStatus(p.status) as any,
