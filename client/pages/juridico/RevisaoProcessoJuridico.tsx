@@ -41,7 +41,7 @@ export default function RevisaoProcessoJuridico() {
 
   const aoFinalizar = async () => {
     if (!decisao) {
-      toast({ title: "Selecione o Resultado da Análise", description: "Campo obrigatório." });
+      toast({ title: "Selecione o Resultado da Sindicância", description: "Campo obrigatório." });
       return;
     }
     if (decisao === "Aplicar Medida Disciplinar" && !medidaRecomendada) {
@@ -82,7 +82,7 @@ export default function RevisaoProcessoJuridico() {
         toast({ title: "Relatório não enviado automaticamente", description: `Você pode reenviar depois. ${errorMessage(fx)}` });
       }
 
-      toast({ title: "Análise finalizada", description: "Decisão salva com sucesso." });
+      toast({ title: "Sindicância finalizada", description: "Decisão salva com sucesso." });
       navegar("/juridico");
     } catch (e: any) {
       toast({ title: "Erro ao salvar decisão", description: errorMessage(e) });
@@ -109,7 +109,7 @@ export default function RevisaoProcessoJuridico() {
             ) : (
               <>
                 <div>
-                  <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">Análise Jurídica do Processo</h1>
+                  <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">Sindicância Jurídica do Processo</h1>
                   <p className="font-roboto text-sis-secondary-text">Registre a sindicância, parecer e decisão final.</p>
                 </div>
 
@@ -147,7 +147,7 @@ export default function RevisaoProcessoJuridico() {
                 {/* 2. Análise Jurídica / Sindicância */}
                 <Card className="border-sis-border bg-white">
                   <CardHeader>
-                    <CardTitle>Análise Jurídica / Sindicância</CardTitle>
+                    <CardTitle>Sindicância Jurídica</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
@@ -178,7 +178,7 @@ export default function RevisaoProcessoJuridico() {
                       <div className="space-y-3">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div>
-                            <Label className="text-xs text-sis-secondary-text">Resultado da Análise</Label>
+                            <Label className="text-xs text-sis-secondary-text">Resultado da Sindicância</Label>
                             <p className="font-medium text-sis-dark-text">{processoJuridico?.status || "—"}</p>
                           </div>
                           <div>
@@ -198,7 +198,7 @@ export default function RevisaoProcessoJuridico() {
                       <>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div>
-                            <Label className="mb-2 block text-xs text-sis-secondary-text">Resultado da Análise</Label>
+                            <Label className="mb-2 block text-xs text-sis-secondary-text">Resultado da Sindicância</Label>
                             <Select onValueChange={setDecisao} value={decisao}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione o resultado" />
@@ -251,7 +251,7 @@ export default function RevisaoProcessoJuridico() {
                         <div className="flex gap-3 pt-2">
                           <Button variant="outline" onClick={() => navegar(-1)}>Voltar</Button>
                           <Button onClick={aoFinalizar} className="bg-sis-blue hover:bg-blue-700 text-white">
-                            Finalizar Análise e Salvar Decisão
+                            Finalizar Sindicância e Salvar Decisão
                           </Button>
                         </div>
                       </>
