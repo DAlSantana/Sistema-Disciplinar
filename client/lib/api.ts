@@ -53,7 +53,7 @@ export async function fetchEmployees() {
           tipoDesvio: (pr as any)?.misconduct_types?.name ?? "",
           classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
           medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
-          status: pr.status ? (pr.status.replace(/_/g, " ") as any) : ("Em Análise" as any),
+          status: normalizeStatus(pr.status) as any,
         })),
   }));
 
