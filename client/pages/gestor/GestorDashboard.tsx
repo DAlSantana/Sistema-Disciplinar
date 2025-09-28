@@ -133,7 +133,7 @@ export default function GestorDashboard() {
     <div className="flex h-screen bg-sis-bg-light">
       <Sidebar onSair={handleSair} />
       <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
+        <div className="flex-1 overflow-auto p-4 md:p-6">
           <div className="mx-auto max-w-7xl">
             <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
               <div>
