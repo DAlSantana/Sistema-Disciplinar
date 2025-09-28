@@ -96,7 +96,7 @@ export default function ProcessosAguardandoAnalise() {
 
             <Card className="border-sis-border bg-white" data-loc="client/components/ui/card.tsx:8:3">
               <CardHeader data-loc="client/components/ui/card.tsx:23:3">
-                <CardTitle className="text-xl">Aguardando Parecer</CardTitle>
+                <CardTitle className="text-xl">Sindicância</CardTitle>
               </CardHeader>
               <CardContent>
                 {erro && (
