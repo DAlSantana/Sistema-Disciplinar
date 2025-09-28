@@ -46,18 +46,18 @@ export default function UltimosLogins() {
   const list = useMemo(() => items.slice(0, 5), [items]);
 
   return (
-    <div className="min-h-[298px] w-full max-w-[363px] rounded-[10px] bg-white p-6 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-      <div className="mb-6">
-        <h3 className="font-roboto text-lg font-bold text-sis-dark-text">Últimos Logins</h3>
+    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+      <div className="mb-4">
+        <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Últimos Logins</h3>
       </div>
 
-      <div className="mb-6 space-y-4">
+      <div className="mb-4 space-y-3">
         {list.map((login) => (
           <div key={login.id + String(login.lastSignInAt)} className="flex items-center justify-between gap-3">
-            <span className="font-roboto text-base text-sis-dark-text truncate" title={login.email || login.nome}>
+            <span className="truncate font-roboto text-sm text-sis-dark-text sm:text-base" title={login.email || login.nome}>
               {login.nome || login.email || login.id}
             </span>
-            <span className="font-roboto text-sm text-sis-secondary-text whitespace-nowrap">
+            <span className="whitespace-nowrap font-roboto text-xs text-sis-secondary-text sm:text-sm">
               {formatRelativo(login.lastSignInAt)}
             </span>
           </div>
@@ -67,7 +67,7 @@ export default function UltimosLogins() {
         )}
       </div>
 
-      <div className="flex items-center space-x-5">
+      <div className="flex items-center">
         <button className="flex items-center space-x-2 text-sis-blue hover:underline">
           <span className="font-roboto text-sm font-medium">Ver Todos</span>
           <svg className="h-4 w-4" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
