@@ -79,7 +79,7 @@ export default function TodosProcessos() {
                   Todos os Processos (Jurídico)
                 </h1>
                 <p className="font-roboto text-sis-secondary-text">
-                  Visualize e acesse qualquer processo para análise e decisão.
+                  Visualize e acesse qualquer processo para sindicância e decisão.
                 </p>
               </div>
               <div className="flex w-full max-w-xl gap-3">
