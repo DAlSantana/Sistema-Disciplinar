@@ -31,6 +31,7 @@ export default function GestorDashboard() {
 
   const [processos, setProcessos] = useState<DashboardProc[]>([]);
   const [topDesvios, setTopDesvios] = useState<Array<{ name: string; count: number }>>([]);
+  const [loading, setLoading] = useState(true);
   const [metricas, setMetricas] = useState<Array<{ titulo: string; valor: string; descricao: string; icon: JSX.Element }>>([
     { titulo: "Processos Ativos", valor: "0", descricao: "", icon: (
         <svg className="h-4 w-4" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
