@@ -131,7 +131,7 @@ export async function fetchEmployeeById(matriculaOrId: string) {
 function normalizeStatus(raw?: string | null): string {
   const v = (raw ?? "Em_Analise").toString().replace(/_/g, " ").trim();
   const base = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (base.includes("analise")) return "Em Análise";
+  if (base.includes("analise")) return "Sindicância";
   if (base.includes("sindic")) return "Sindicância";
   if (base.includes("assinatura")) return "Aguardando Assinatura";
   if (base.includes("final")) return "Finalizado";

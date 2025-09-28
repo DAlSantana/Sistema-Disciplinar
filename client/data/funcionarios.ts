@@ -41,7 +41,7 @@ export const funcionariosMock: Funcionario[] = [
         tipoDesvio: "Uso Indevido de Recursos",
         classificacao: "Média",
         medidaAplicada: "Advertência Escrita",
-        status: "Em Análise",
+        status: "Sindicância",
       },
     ],
   },

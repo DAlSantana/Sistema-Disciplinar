@@ -21,7 +21,7 @@ export const processosMock: ProcessoItem[] = [
     tipoDesvio: "Atraso Injustificado",
     classificacao: "Leve",
     dataAbertura: "01/02/2025",
-    status: "Em Análise",
+    status: "Sindicância",
   },
   {
     id: "PROC-1002",
@@ -45,7 +45,7 @@ export const processosMock: ProcessoItem[] = [
     tipoDesvio: "Descumprimento de Normas",
     classificacao: "Gravíssima",
     dataAbertura: "12/02/2025",
-    status: "Em Análise",
+    status: "Sindicância",
   },
   {
     id: "PROC-1005",

@@ -24,23 +24,22 @@ import {
 import { FileText, Clock, CheckCircle2, PieChart as PieChartIcon, BarChart3, Calendar, Search, Download } from "lucide-react";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 function getStatusClasses(s: StatusAtual) {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 }
 
 const statusOpcoes: ("todos" | StatusAtual)[] = [
   "todos",
-  "Em Análise",
   "Sindicância",
   "Aguardando Assinatura",
   "Finalizado",
@@ -98,7 +97,7 @@ export default function Relatorios() {
 
   const metricas = useMemo(() => {
     const total = dados.length;
-    const aguardando = dados.filter((d) => d.status === "Em Análise").length;
+    const aguardando = dados.filter((d) => d.status === "Sindicância").length;
     const revisao = dados.filter((d) => d.status === "Sindicância").length;
     const finalizado = dados.filter((d) => d.status === "Finalizado").length;
     return { total, aguardando, revisao, finalizado };
@@ -200,7 +199,7 @@ export default function Relatorios() {
                         <SelectTrigger className="w-full"><SelectValue placeholder="Todos os Status" /></SelectTrigger>
                         <SelectContent>
                           {statusOpcoes.map((s) => (
-                            <SelectItem key={s} value={s}>{s === "todos" ? "Todos os Status" : s}</SelectItem>
+                            <SelectItem key={s} value={s}>{s === "todos" ? "TODOS OS STATUS" : s}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>

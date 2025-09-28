@@ -47,8 +47,8 @@ export const listProcesses: RequestHandler = async (_req, res) => {
       return c === "Media" ? "Média" : c;
     }
     function normalizeStatus(s?: string | null) {
-      if (!s) return "Em Análise" as any;
-      if (s === "Em_Analise") return "Em Análise" as any;
+      if (!s) return "Sindicância" as any;
+      if (s === "Em_Analise") return "Sindicância" as any;
       return (s.replace(/_/g, " ") as any);
     }
 
