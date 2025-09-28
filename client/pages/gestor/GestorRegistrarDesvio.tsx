@@ -50,7 +50,7 @@ function deriveClassificationFromType(type?: { default_classification?: string |
   return normalizeClassification(type.default_classification) ?? normalizeClassification(type.name);
 }
 
-function formatStatusLabel(value?: string | null) {
+function formatDisplayLabel(value?: string | null) {
   if (!value && value !== "") return undefined;
   const normalized = value?.toString().trim() ?? "";
   if (!normalized) return undefined;
@@ -75,7 +75,34 @@ function resolveHistoryStatus(entry: any) {
   ];
 
   for (const candidate of candidates) {
-    const formatted = formatStatusLabel(candidate);
+    const formatted = formatDisplayLabel(candidate);
+    if (formatted) return formatted;
+  }
+
+  return "-";
+}
+
+function resolveHistoryMisconductType(entry: any) {
+  const nestedCandidates = [
+    entry?.misconduct_types?.name,
+    entry?.misconduct_types?.descricao,
+    entry?.misconduct_type?.name,
+    entry?.misconduct_type?.descricao,
+  ];
+
+  const directCandidates = [
+    entry?.misconduct_type_name,
+    entry?.misconduct_type_descricao,
+    entry?.misconductTypeName,
+    entry?.misconductType,
+    entry?.tipo_desvio,
+    entry?.tipoDesvio,
+    entry?.tipo_de_desvio,
+    entry?.tipo,
+  ];
+
+  for (const candidate of [...nestedCandidates, ...directCandidates]) {
+    const formatted = formatDisplayLabel(candidate);
     if (formatted) return formatted;
   }
 
@@ -334,7 +361,7 @@ export default function GestorRegistrarDesvio() {
                         {history.map((h, idx) => (
                           <tr key={`${h.id ?? idx}`} className="border-t">
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{formatDate((h as any).data_da_ocorrencia ?? h.created_at ?? h.data)}</td>
-                            <td className="py-2 pr-4 font-roboto text-sis-dark-text">{(h as any)?.misconduct_types?.name ?? h.tipo_desvio ?? h.misconduct_type ?? h.tipo ?? '-'}</td>
+                            <td className="py-2 pr-4 font-roboto text-sis-dark-text">{resolveHistoryMisconductType(h)}</td>
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{h.classificacao ?? h.classification ?? '-'}</td>
                             <td className="py-2 pr-4 font-roboto text-sis-dark-text">{resolveHistoryStatus(h)}</td>
                           </tr>
