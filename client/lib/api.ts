@@ -23,6 +23,15 @@ export interface ProcessoAPI {
   created_at?: string | null;
 }
 
+function normalizeClassificacao(raw?: string | null): "Leve" | "Média" | "Grave" | "Gravíssima" {
+  const v = (raw ?? "Leve").toString().replace(/_/g, " ").trim();
+  const base = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (base.includes("gravissima")) return "Gravíssima";
+  if (base.includes("grave")) return "Grave";
+  if (base.includes("media")) return "Média";
+  return "Leve";
+}
+
 export async function fetchEmployees() {
   const { data: employees, error: empErr } = await supabase.from("employees").select("*");
   if (empErr) throw empErr;
@@ -56,7 +65,7 @@ export async function fetchEmployees() {
           id: pr.id,
           dataOcorrencia: (() => { const d = pr.created_at ?? (pr as any).periodo_ocorrencia_inicio ?? (pr as any).data_da_ocorrencia ?? pr.createdAt ?? (pr as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
           tipoDesvio: (pr as any)?.misconduct_types?.name ?? "",
-          classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
+          classificacao: normalizeClassificacao(pr.classificacao),
           medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
           status: normalizeStatus(pr.status) as any,
         })),
