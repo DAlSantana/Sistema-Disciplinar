@@ -24,7 +24,7 @@ import { fetchProcesses } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 type ProcessoItem = {
   id: string;
   funcionario: string;
@@ -49,14 +49,14 @@ const getClassificacaoClasses = (c: Classificacao) => {
 
 const getStatusClasses = (s: StatusAtual) => {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 };
 
@@ -102,7 +102,6 @@ export default function ProcessosPage() {
 
   const statusLista: (StatusAtual | "todos")[] = [
     "todos",
-    "Em Análise",
     "Sindicância",
     "Aguardando Assinatura",
     "Finalizado",
@@ -164,7 +163,7 @@ export default function ProcessosPage() {
                 <SelectContent>
                   {tiposDisponiveis.map((t) => (
                     <SelectItem key={t} value={t}>
-                      {t === "todos" ? "Todos os Tipos" : t}
+                      {t === "todos" ? "TODOS OS TIPOS" : t}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -180,7 +179,7 @@ export default function ProcessosPage() {
                 <SelectContent>
                   {classificacoes.map((c) => (
                     <SelectItem key={c} value={c}>
-                      {c === "todas" ? "Todas as Classificações" : c}
+                      {c === "todas" ? "TODAS AS CLASSIFICAÇÕES" : c}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -196,7 +195,7 @@ export default function ProcessosPage() {
                 <SelectContent>
                   {statusLista.map((s) => (
                     <SelectItem key={s} value={s}>
-                      {s === "todos" ? "Todos os Status" : s}
+                      {s === "todos" ? "TODOS OS STATUS" : s}
                     </SelectItem>
                   ))}
                 </SelectContent>

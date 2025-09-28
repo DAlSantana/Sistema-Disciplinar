@@ -16,7 +16,7 @@ import {
 import { fetchEmployeeById } from "@/lib/api";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusProcesso = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusProcesso = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 type Registro = {
   id: string;
   dataOcorrencia: string;
@@ -49,14 +49,14 @@ const getClassificacaoClasses = (c: Classificacao) => {
 
 const getStatusClasses = (s: StatusProcesso) => {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 };
 

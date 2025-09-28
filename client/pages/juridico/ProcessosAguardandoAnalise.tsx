@@ -10,17 +10,17 @@ import { Input } from "@/components/ui/input";
 import { fetchProcesses } from "@/lib/api";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 function getStatusClasses(s: StatusAtual) {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 }
 
@@ -52,8 +52,8 @@ export default function ProcessosAguardandoAnalise() {
   }, []);
 
   const itens = useMemo(() => {
-    // Mostrar processos que precisam de atuação jurídica: "Sindicância" ou "Em Análise"
-    const aguardando = processos.filter((c) => c.status === "Sindicância" || c.status === "Em Análise");
+    // Mostrar processos que precisam de atuação jurídica: "Sindicância"
+    const aguardando = processos.filter((c) => c.status === "Sindicância");
     if (!busca.trim()) return aguardando;
     const q = busca.toLowerCase();
     return aguardando.filter(
@@ -78,7 +78,7 @@ export default function ProcessosAguardandoAnalise() {
             <div className="flex items-end justify-between gap-4" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:63:13">
               <div>
                 <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:64:15">
-                  Processos Aguardando Análise Jurídica
+                  Processos Aguardando Sindicância
                 </h1>
                 <p className="font-roboto text-sis-secondary-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:68:17">
                   Lista de processos encaminhados para sindicância e parecer jurídico.
@@ -96,7 +96,7 @@ export default function ProcessosAguardandoAnalise() {
 
             <Card className="border-sis-border bg-white" data-loc="client/components/ui/card.tsx:8:3">
               <CardHeader data-loc="client/components/ui/card.tsx:23:3">
-                <CardTitle className="text-xl">Aguardando Parecer</CardTitle>
+                <CardTitle className="text-xl">Sindicância</CardTitle>
               </CardHeader>
               <CardContent>
                 {erro && (

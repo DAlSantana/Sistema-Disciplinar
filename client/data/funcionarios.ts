@@ -1,5 +1,5 @@
 export type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-export type StatusProcesso = "Finalizado" | "Em Análise" | "Sindicância" | "Aguardando Assinatura";
+export type StatusProcesso = "Finalizado" | "Sindicância" | "Aguardando Assinatura";
 
 export interface RegistroDisciplinar {
   id: string;
@@ -41,7 +41,7 @@ export const funcionariosMock: Funcionario[] = [
         tipoDesvio: "Uso Indevido de Recursos",
         classificacao: "Média",
         medidaAplicada: "Advertência Escrita",
-        status: "Em Análise",
+        status: "Sindicância",
       },
     ],
   },

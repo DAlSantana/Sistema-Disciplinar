@@ -1,6 +1,5 @@
 export type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
 export type StatusAtual =
-  | "Em Análise"
   | "Sindicância"
   | "Aguardando Assinatura"
   | "Finalizado";
@@ -21,7 +20,7 @@ export const processosMock: ProcessoItem[] = [
     tipoDesvio: "Atraso Injustificado",
     classificacao: "Leve",
     dataAbertura: "01/02/2025",
-    status: "Em Análise",
+    status: "Sindicância",
   },
   {
     id: "PROC-1002",
@@ -45,7 +44,7 @@ export const processosMock: ProcessoItem[] = [
     tipoDesvio: "Descumprimento de Normas",
     classificacao: "Gravíssima",
     dataAbertura: "12/02/2025",
-    status: "Em Análise",
+    status: "Sindicância",
   },
   {
     id: "PROC-1005",

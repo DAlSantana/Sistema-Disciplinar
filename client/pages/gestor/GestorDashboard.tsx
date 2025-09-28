@@ -76,7 +76,6 @@ export default function GestorDashboard() {
           status: {
             texto: p.status,
             cor:
-              p.status === "Em Análise" ? "amarelo" :
               p.status === "Sindicância" ? "azul" :
               p.status === "Aguardando Assinatura" ? "roxo" :
               "verde",
@@ -103,7 +102,7 @@ export default function GestorDashboard() {
         const total = list?.length || 0;
         const concluidos = (list || []).filter((p) => p.status === "Finalizado").length;
         const ativos = total - concluidos;
-        const pendentes = (list || []).filter((p) => p.status === "Em Análise" || p.status === "Sindicância").length;
+        const pendentes = (list || []).filter((p) => p.status === "Sindicância").length;
 
         const now = Date.now();
         const daysArr: number[] = (list || [])

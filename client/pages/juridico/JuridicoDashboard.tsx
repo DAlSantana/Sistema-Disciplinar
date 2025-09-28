@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 
 type ProcessoJuridico = {
   id: string;
@@ -63,8 +63,8 @@ const metricDefinitions: readonly MetricDefinition[] = [
   },
   {
     key: "analise",
-    titulo: "Casos em Análise",
-    descricao: "Atualmente aguardando revisão.",
+    titulo: "Casos em Sindicância",
+    descricao: "Atualmente em sindicância.",
     icon: (
       <svg
         className="h-5 w-5"
@@ -146,21 +146,21 @@ function coerceStatus(raw?: string | null): StatusAtual {
   if (normalized.includes("final")) return "Finalizado";
   if (normalized.includes("assin")) return "Aguardando Assinatura";
   if (normalized.includes("sindic")) return "Sindicância";
-  return "Em Análise";
+  return "Sindicância";
 }
 
 function getStatusClasses(s: StatusAtual) {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 }
 
-const awaitingStatuses: StatusAtual[] = ["Sindicância", "Em Análise"];
+const awaitingStatuses: StatusAtual[] = ["Sindicância"];
 
 function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridico[]; loading: boolean }) {
   const navigate = useNavigate();
@@ -197,7 +197,7 @@ function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridic
           ) : aguardando.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="py-10 text-center text-sis-secondary-text">
-                Nenhum processo aguardando análise jurídica.
+                Nenhum processo aguardando sindicância.
               </TableCell>
             </TableRow>
           ) : (
@@ -253,7 +253,7 @@ export default function JuridicoDashboard() {
         setProcessos(mapped);
 
         const total = mapped.length;
-        const emAnaliseCount = mapped.filter((p) => p.status === "Em Análise" || p.status === "Sindicância").length;
+        const emAnaliseCount = mapped.filter((p) => p.status === "Sindicância").length;
         const finalizadosCount = mapped.filter((p) => p.status === "Finalizado").length;
         const acordosCount = mapped.filter((p) => /acordo/i.test(p.resolucao)).length;
         const acordosEffective = acordosCount > 0 ? acordosCount : finalizadosCount;
@@ -350,10 +350,10 @@ export default function JuridicoDashboard() {
                   Registrar Novo Desvio
                 </Button>
 
-                {/* Processos Aguardando Análise Jurídica (Sindicância) */}
+                {/* Processos Aguardando Sindicância */}
                 <Card className="border-sis-border bg-white">
                   <CardHeader>
-                    <CardTitle className="text-xl">Processos Aguardando Análise Jurídica (Sindicância)</CardTitle>
+                    <CardTitle className="text-xl">Processos Aguardando Sindicância</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <AwaitingLegalTable processos={processos} loading={loadingProcessos} />

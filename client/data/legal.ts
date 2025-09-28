@@ -1,8 +1,7 @@
 export type LegalSeverity = "Leve" | "Média" | "Grave" | "Gravíssima";
 
 export type LegalReviewStatus =
-  | "Aguardando Parecer Jurídico"
-  | "Em Revisão"
+  | "Sindicância"
   | "Finalizado";
 
 export interface LegalAttachment {
@@ -41,7 +40,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
       { name: "relatorio-logs.pdf", url: "#" },
       { name: "testemunhos.txt", url: "#" },
     ],
-    status: "Aguardando Parecer Jurídico",
+    status: "Sindicância",
   },
   {
     id: "PROC-1004",
@@ -56,7 +55,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
       { name: "evidencias.zip", url: "#" },
       { name: "emails.eml", url: "#" },
     ],
-    status: "Aguardando Parecer Jurídico",
+    status: "Sindicância",
   },
   {
     id: "PROC-1010",
@@ -71,7 +70,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
       { name: "prints.pdf", url: "#" },
       { name: "acessos.csv", url: "#" },
     ],
-    status: "Aguardando Parecer Jurídico",
+    status: "Sindicância",
   },
   // Diversificação de status e classificações
   {
@@ -83,7 +82,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-08",
     managerDescription: "Atrasos em três ocasiões na mesma semana.",
     managerAttachments: [{ name: "registros-ponto.pdf", url: "#" }],
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-1016",
@@ -94,7 +93,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-10",
     managerDescription: "Ocorrência em reunião com clientes. Relatos anexados.",
     managerAttachments: [{ name: "relatos.pdf", url: "#" }],
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-1020",
@@ -121,7 +120,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-14",
     managerDescription: "Relatos de colegas e superior imediato.",
     managerAttachments: [{ name: "relatorio-interno.pdf", url: "#" }],
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-1025",
@@ -132,7 +131,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-15",
     managerDescription: "Compartilhamento de informações estratégicas.",
     managerAttachments: [{ name: "evidencias-chat.pdf", url: "#" }],
-    status: "Aguardando Parecer Jurídico",
+    status: "Sindicância",
   },
   {
     id: "PROC-1030",
@@ -159,7 +158,7 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-17",
     managerDescription: "Participação em negociação com fornecedor parente.",
     managerAttachments: [{ name: "declaracao.pdf", url: "#" }],
-    status: "Em Revisão",
+    status: "Sindicância",
   },
   {
     id: "PROC-1035",
@@ -170,6 +169,6 @@ export const legalCasesAwaitingMock: LegalCase[] = [
     occurrenceDate: "2025-02-18",
     managerDescription: "Compartilhou credenciais com terceiro.",
     managerAttachments: [{ name: "logs-acesso.csv", url: "#" }],
-    status: "Aguardando Parecer Jurídico",
+    status: "Sindicância",
   },
 ];

@@ -24,23 +24,22 @@ import {
 import { FileText, Clock, CheckCircle2, PieChart as PieChartIcon, BarChart3, Calendar, Search, Download } from "lucide-react";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 function getStatusClasses(s: StatusAtual) {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 }
 
 const statusOpcoes: ("todos" | StatusAtual)[] = [
   "todos",
-  "Em Análise",
   "Sindicância",
   "Aguardando Assinatura",
   "Finalizado",
@@ -98,16 +97,14 @@ export default function Relatorios() {
 
   const metricas = useMemo(() => {
     const total = dados.length;
-    const aguardando = dados.filter((d) => d.status === "Em Análise").length;
-    const revisao = dados.filter((d) => d.status === "Sindicância").length;
+    const aguardando = dados.filter((d) => d.status === "Sindicância").length;
     const finalizado = dados.filter((d) => d.status === "Finalizado").length;
-    return { total, aguardando, revisao, finalizado };
+    return { total, aguardando, finalizado };
   }, [dados]);
 
   const distribuicaoStatus = useMemo(
     () => [
-      { name: "Aguardando", value: metricas.aguardando },
-      { name: "Em Revisão", value: metricas.revisao },
+      { name: "Sindicância", value: metricas.aguardando },
       { name: "Finalizado", value: metricas.finalizado },
     ],
     [metricas],
@@ -122,7 +119,7 @@ export default function Relatorios() {
     return Array.from(mapa.entries()).map(([name, value]) => ({ name, value }));
   }, [dados]);
 
-  const CORES_STATUS = ["#F59E0B", "#3B82F6", "#22C55E"]; // amarelo, azul, verde
+  const CORES_STATUS = ["#3B82F6", "#22C55E"]; // azul (Sindicância), verde (Finalizado)
   const CORES_CLASS = ["#86EFAC", "#FDE68A", "#FCA5A5", "#F87171"]; // leve, média, grave, gravíssima
 
   const exportarCSV = () => {
@@ -197,10 +194,10 @@ export default function Relatorios() {
                     <div className="col-span-12 md:col-span-3">
                       <label className="mb-1 block text-xs text-sis-secondary-text">Status</label>
                       <Select value={statusFiltro} onValueChange={(v) => setStatusFiltro(v as any)}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="Todos os Status" /></SelectTrigger>
+                        <SelectTrigger className="w-full"><SelectValue placeholder="TODOS OS STATUS" /></SelectTrigger>
                         <SelectContent>
                           {statusOpcoes.map((s) => (
-                            <SelectItem key={s} value={s}>{s === "todos" ? "Todos os Status" : s}</SelectItem>
+                            <SelectItem key={s} value={s}>{s === "todos" ? "TODOS OS STATUS" : s}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -250,22 +247,12 @@ export default function Relatorios() {
               </Card>
               <Card className="border-sis-border bg-white">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Aguardando Parecer</CardTitle>
+                  <CardTitle className="text-sm font-medium">Sindicância</CardTitle>
                   <Clock className="h-4 w-4 text-amber-500" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{metricas.aguardando}</div>
-                  <p className="text-xs text-sis-secondary-text">Casos pendentes de análise</p>
-                </CardContent>
-              </Card>
-              <Card className="border-sis-border bg-white">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Em Revisão</CardTitle>
-                  <PieChartIcon className="h-4 w-4 text-blue-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{metricas.revisao}</div>
-                  <p className="text-xs text-sis-secondary-text">Sindicâncias em andamento</p>
+                  <p className="text-xs text-sis-secondary-text">Casos em sindicância</p>
                 </CardContent>
               </Card>
               <Card className="border-sis-border bg-white">
