@@ -144,7 +144,7 @@ export default function GestorDashboard() {
                 <Button onClick={handleRegistrarDesvio} className="bg-sis-blue hover:bg-blue-700">Registrar Desvio</Button>
               </div>
             </div>
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {metricas.map((metrica, index) => (
                 <MetricCard key={index} titulo={metrica.titulo} valor={metrica.valor} descricao={metrica.descricao} icon={metrica.icon} />
               ))}
