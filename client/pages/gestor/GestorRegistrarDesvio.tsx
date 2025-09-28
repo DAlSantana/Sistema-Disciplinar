@@ -220,8 +220,6 @@ export default function GestorRegistrarDesvio() {
         criado_por_user_id: userId,
       };
 
-      console.log("Dados que estão sendo enviados para o Supabase:", payload);
-
       const { error } = await supabase.from("processes").insert(payload);
       if (error) throw error;
 
