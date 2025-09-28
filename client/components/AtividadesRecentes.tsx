@@ -45,12 +45,12 @@ export default function AtividadesRecentes() {
   const list = useMemo(() => items.slice(0, 5), [items]);
 
   return (
-    <div className="w-full h-full rounded-lg border bg-white p-6 shadow-sm">
+    <div className="w-full h-fit rounded-lg border bg-white p-4 shadow-sm">
       <div className="mb-4">
         <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Atividades Recentes</h3>
       </div>
 
-      <div className="mb-4 space-y-4">
+      <div className="mb-2 max-h-64 overflow-y-auto space-y-3">
         {list.map((a) => (
           <div key={a.id + a.at} className="space-y-0.5">
             <div className="font-roboto text-sm text-sis-dark-text">{a.descricao}</div>
