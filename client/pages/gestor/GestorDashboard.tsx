@@ -132,12 +132,17 @@ export default function GestorDashboard() {
         const arr = Array.isArray(data) ? data : data ? [data] : [];
         const mapped = arr
           .map((r: any) => {
-            const raw = (r.name ?? r.tipo ?? r.misconduct_type ?? "").toString().trim();
+            const raw = (r.name ?? r.tipo ?? r.misconduct_type ?? r.misconduct_type_name ?? "").toString().trim();
             const name = raw.length === 0 ? "Não informado" : raw;
-            return { name, count: Number(r.count ?? r.total ?? 0) };
+            const count = Number(r.count ?? r.total ?? r.qtd ?? r.qtde ?? 0);
+            return { name, count };
           })
+          .filter((x) => x.name && typeof x.count === "number")
           .slice(0, 5);
-        setTopDesvios(mapped);
+        // Only override fallback if RPC returned meaningful counts
+        if (mapped.length > 0 && mapped.some((m) => m.count > 0)) {
+          setTopDesvios(mapped);
+        }
       })
       .catch(() => {})
       .finally(() => { if (mounted) setLoading(false); });
