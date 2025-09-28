@@ -120,7 +120,7 @@ export async function fetchEmployeeById(matriculaOrId: string) {
       return d ? new Date(d).toLocaleDateString() : "";
     })(),
     tipoDesvio: pr?.misconduct_types?.name ?? "",
-    classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
+    classificacao: normalizeClassificacao(pr.classificacao),
     medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
     status: normalizeStatus(pr.status) as any,
   }));
@@ -151,7 +151,7 @@ export async function fetchProcesses() {
     id: p.id,
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
-    classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
+    classificacao: normalizeClassificacao(p.classificacao),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
     status: normalizeStatus(p.status) as any,
@@ -204,7 +204,7 @@ export async function fetchProcessById(id: string) {
     id: p.id,
     funcionario: p.employees?.nome_completo ?? "",
     tipoDesvio: p.misconduct_types?.name ?? "",
-    classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
+    classificacao: normalizeClassificacao(p.classificacao),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
     status: normalizeStatus(p.status) as any,
