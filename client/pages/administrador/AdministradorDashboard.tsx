@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as Router from "react-router-dom";
 import SidebarAdministrador from "@/components/SidebarAdministrador";
 import CartaoMetrica from "@/components/CartaoMetrica";
@@ -8,6 +8,7 @@ import UltimosLogins from "@/components/UltimosLogins";
 import AtividadesRecentes from "@/components/AtividadesRecentes";
 import AcoesRapidas from "@/components/AcoesRapidas";
 import { authHeaders } from "@/lib/api";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 
 export default function AdministradorDashboard() {
   const navigate = Router.useNavigate();
@@ -17,24 +18,60 @@ export default function AdministradorDashboard() {
   };
 
   const [totalUsuarios, setTotalUsuarios] = useState(0);
+  const [usuariosPorPerfil, setUsuariosPorPerfil] = useState<Array<{ perfil: string; total: number }>>([]);
+  const [loginsSerie, setLoginsSerie] = useState<Array<{ dia: string; total: number }>>([]);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
         const res = await fetch("/api/admin/users", { headers: await authHeaders() });
-        if (res.status === 401) {
-          if (mounted) setTotalUsuarios(0);
-          return;
-        }
+        if (res.status === 401) { if (mounted) { setTotalUsuarios(0); setUsuariosPorPerfil([]); } return; }
         if (!res.ok) throw new Error(String(res.status));
         const rows = (await res.json()) as any[];
-        if (mounted) setTotalUsuarios(Array.isArray(rows) ? rows.length : 0);
+        if (mounted) {
+          setTotalUsuarios(Array.isArray(rows) ? rows.length : 0);
+          const byPerfil = new Map<string, number>();
+          (rows || []).forEach((r: any) => {
+            const p = (r.perfil || "não definido") as string;
+            byPerfil.set(p, (byPerfil.get(p) || 0) + 1);
+          });
+          setUsuariosPorPerfil(Array.from(byPerfil.entries()).map(([perfil, total]) => ({ perfil, total })));
+        }
       } catch {
-        if (mounted) setTotalUsuarios(0);
+        if (mounted) { setTotalUsuarios(0); setUsuariosPorPerfil([]); }
       }
     })();
+
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/logins", { headers: await authHeaders() });
+        if (!res.ok) throw new Error(String(res.status));
+        const rows = (await res.json()) as Array<{ lastSignInAt: string | null } & any>;
+        // Bucket por dia (últimos 14 dias)
+        const days = 14;
+        const buckets = new Map<string, number>();
+        for (let i = days - 1; i >= 0; i--) {
+          const d = new Date(); d.setDate(d.getDate() - i);
+          const key = d.toISOString().slice(0, 10);
+          buckets.set(key, 0);
+        }
+        (rows || []).forEach((r) => {
+          const iso = r.lastSignInAt; if (!iso) return;
+          const key = new Date(iso).toISOString().slice(0, 10);
+          if (buckets.has(key)) buckets.set(key, (buckets.get(key) || 0) + 1);
+        });
+        const serie = Array.from(buckets.entries()).map(([k, v]) => ({ dia: k.slice(5), total: v }));
+        if (mounted) setLoginsSerie(serie);
+      } catch {
+        if (mounted) setLoginsSerie([]);
+      }
+    })();
+
     return () => { mounted = false; };
   }, []);
+
+  const chartUsuariosData = useMemo(() => usuariosPorPerfil.map((x) => ({ name: x.perfil, total: x.total })), [usuariosPorPerfil]);
 
   return (
     <div className="min-h-screen bg-sis-bg-light">
@@ -79,7 +116,40 @@ export default function AdministradorDashboard() {
               <UltimosLogins />
             </div>
 
-            {/* Segunda linha - Atividades e Ações */}
+            {/* Segunda linha - Gráficos */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="rounded-[10px] bg-white p-4 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
+                <h3 className="mb-3 font-roboto text-lg font-bold text-sis-dark-text">Usuários por Perfil</h3>
+                <div className="h-[260px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartUsuariosData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis allowDecimals={false} />
+                      <Tooltip />
+                      <Bar dataKey="total" fill="#0F74C7" radius={[4,4,0,0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="rounded-[10px] bg-white p-4 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
+                <h3 className="mb-3 font-roboto text-lg font-bold text-sis-dark-text">Logins nos últimos 14 dias</h3>
+                <div className="h-[260px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={loginsSerie}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="dia" />
+                      <YAxis allowDecimals={false} />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="total" stroke="#0F74C7" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* Terceira linha - Atividades e Ações */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <AtividadesRecentes />
               <AcoesRapidas />

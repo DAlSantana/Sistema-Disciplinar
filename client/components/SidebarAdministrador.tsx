@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SidebarAdministradorProps {
   onSair?: () => void;
@@ -8,6 +8,19 @@ interface SidebarAdministradorProps {
 export default function SidebarAdministrador({ onSair }: SidebarAdministradorProps) {
   const [activeItem, setActiveItem] = useState("dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  function idFromPath(pathname: string): string {
+    if (pathname.startsWith("/administrador/usuarios")) return "gerenciamento-usuarios";
+    if (pathname.startsWith("/administrador/importar-funcionarios")) return "importar-funcionarios";
+    if (pathname.startsWith("/administrador/configuracoes")) return "configuracoes-sistema";
+    if (pathname.startsWith("/administrador")) return "dashboard";
+    return "dashboard";
+  }
+
+  useEffect(() => {
+    setActiveItem(idFromPath(location.pathname));
+  }, [location.pathname]);
 
   const menuItems = [
     {
@@ -43,6 +56,16 @@ export default function SidebarAdministrador({ onSair }: SidebarAdministradorPro
           <path d="M12.4525 12.6655C12.8554 12.5445 13.2922 12.746 13.4567 13.1429C13.632 13.5663 13.4311 14.052 13.0077 14.2274L12.2418 14.5443C11.8182 14.7195 11.3326 14.5187 11.1572 14.0953C10.982 13.6718 11.1829 13.1861 11.6062 13.0107L12.3731 12.6939L12.4525 12.6655Z" fill="currentColor"/>
           <path d="M16.66 12.5C16.66 11.5832 15.9168 10.84 15 10.84C14.0832 10.84 13.34 11.5832 13.34 12.5C13.34 13.4168 14.0832 14.16 15 14.16C15.9168 14.16 16.66 13.4168 16.66 12.5ZM18.32 12.5C18.32 14.3335 16.8336 15.82 15 15.82C13.1664 15.82 11.68 14.3335 11.68 12.5C11.68 10.6664 13.1664 9.17999 15 9.17999C16.8336 9.17999 18.32 10.6664 18.32 12.5Z" fill="currentColor"/>
           <path d="M9.99 5.82999C9.99 4.45481 8.87523 3.33999 7.5 3.33999C6.12481 3.33999 5.01 4.45481 5.01 5.82999C5.01 7.20518 6.12481 8.31999 7.5 8.31999C8.87523 8.31999 9.99 7.20518 9.99 5.82999ZM11.65 5.82999C11.65 8.12197 9.79196 9.97999 7.5 9.97999C5.20802 9.97999 3.35 8.12197 3.35 5.82999C3.35 3.53801 5.20802 1.67999 7.5 1.67999C9.79196 1.67999 11.65 3.53801 11.65 5.82999Z" fill="currentColor"/>
+        </svg>
+      ),
+    },
+    {
+      id: "importar-funcionarios",
+      nome: "Importar Funcionários",
+      icon: (
+        <svg className="h-5 w-5 flex-shrink-0" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.16667 2.5C9.6269 2.5 10 2.8731 10 3.33333V10.9769L12.1547 8.82218C12.4801 8.49678 13.0099 8.49678 13.3353 8.82218C13.6607 9.14757 13.6607 9.67744 13.3353 10.0028L9.59006 13.7481C9.43365 13.9045 9.22164 13.9933 9.00001 13.9933C8.77837 13.9933 8.56636 13.9045 8.40996 13.7481L4.66469 10.0028C4.33929 9.67744 4.33929 9.14757 4.66469 8.82218C4.99008 8.49678 5.51995 8.49678 5.84534 8.82218L8.00001 10.9768V3.33333C8.00001 2.8731 8.37312 2.5 8.83334 2.5H9.16667Z" fill="currentColor"/>
+          <path d="M3.33334 12.5C2.87311 12.5 2.50001 12.8731 2.50001 13.3333V15C2.50001 16.3807 3.6193 17.5 5.00001 17.5H15C16.3808 17.5 17.5 16.3807 17.5 15V13.3333C17.5 12.8731 17.1269 12.5 16.6667 12.5C16.2064 12.5 15.8333 12.8731 15.8333 13.3333V15C15.8333 15.4602 15.4602 15.8333 15 15.8333H5.00001C4.53978 15.8333 4.16668 15.4602 4.16668 15V13.3333C4.16668 12.8731 3.79357 12.5 3.33334 12.5Z" fill="currentColor"/>
         </svg>
       ),
     },
@@ -103,6 +126,7 @@ export default function SidebarAdministrador({ onSair }: SidebarAdministradorPro
                 setActiveItem(item.id);
                 if (item.id === "dashboard") navigate("/administrador");
                 if (item.id === "gerenciamento-usuarios") navigate("/administrador/usuarios");
+                if (item.id === "importar-funcionarios") navigate("/administrador/importar-funcionarios");
                 if (item.id === "configuracoes-sistema") navigate("/administrador/configuracoes");
               }}
               className={`flex w-full items-center space-x-3 rounded-md px-2 py-2.5 text-left font-roboto text-sm font-medium transition-colors ${

@@ -117,6 +117,8 @@ export default function GestorRegistrarDesvio() {
   const [periodoFim, setPeriodoFim] = useState("");
   const [selectedMisconductTypeId, setSelectedMisconductTypeId] = useState("");
   const [classificacao, setClassificacao] = useState<ClassificacaoValue | "">("");
+  const [medidaAplicada, setMedidaAplicada] = useState<string>("");
+  const [diasSuspensao, setDiasSuspensao] = useState<string>("");
   const [descricao, setDescricao] = useState("");
   const [anexos, setAnexos] = useState<File[]>([]);
 
@@ -205,6 +207,14 @@ export default function GestorRegistrarDesvio() {
       return;
     }
 
+    if (medidaAplicada === "Suspensão") {
+      const n = Number(diasSuspensao);
+      if (!diasSuspensao || Number.isNaN(n) || n <= 0) {
+        toast.error("Informe os Dias de Suspensão (número maior que 0).");
+        return;
+      }
+    }
+
     try {
       const auth = await supabase.auth.getUser();
       const userId = auth?.data?.user?.id;
@@ -243,6 +253,7 @@ export default function GestorRegistrarDesvio() {
         descricao,
         periodo_ocorrencia_inicio: periodoInicio ? new Date(periodoInicio).toISOString() : null,
         periodo_ocorrencia_fim: periodoFim ? new Date(periodoFim).toISOString() : null,
+        dias_de_suspensao: medidaAplicada === "Suspensão" ? Number(diasSuspensao) : null,
         status: "Em_Analise",
         criado_por_user_id: userId,
       };
@@ -257,6 +268,8 @@ export default function GestorRegistrarDesvio() {
       setPeriodoFim("");
       setSelectedMisconductTypeId("");
       setClassificacao("");
+      setMedidaAplicada("");
+      setDiasSuspensao("");
       setDescricao("");
       setAnexos([]);
       setHistory([]);
@@ -427,6 +440,40 @@ export default function GestorRegistrarDesvio() {
                 </div>
               </div>
 
+              {/* Medida a ser aplicada e Dias de Suspensão */}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
+                    Medida a ser aplicada
+                  </label>
+                  <select
+                    value={medidaAplicada}
+                    onChange={(e) => setMedidaAplicada(e.target.value)}
+                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="Advertência Escrita">Advertência Escrita</option>
+                    <option value="Suspensão">Suspensão</option>
+                    <option value="Justa Causa">Justa Causa</option>
+                  </select>
+                </div>
+                {medidaAplicada === "Suspensão" && (
+                  <div>
+                    <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
+                      Dias de Suspensão
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={diasSuspensao}
+                      onChange={(e) => setDiasSuspensao(e.target.value)}
+                      className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-dark-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue"
+                      placeholder="Ex.: 3"
+                    />
+                    <p className="mt-1 text-xs text-sis-secondary-text">Obrigatório quando a medida for Suspensão.</p>
+                  </div>
+                )}
+              </div>
 
               {/* Descrição */}
               <div>
@@ -471,6 +518,8 @@ export default function GestorRegistrarDesvio() {
                     setPeriodoFim("");
                     setSelectedMisconductTypeId("");
                     setClassificacao("");
+                    setMedidaAplicada("");
+                    setDiasSuspensao("");
                     setDescricao("");
                     setAnexos([]);
                   }}
