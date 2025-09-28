@@ -61,9 +61,31 @@ export async function fetchEmployees() {
 }
 
 export async function fetchEmployeeById(matriculaOrId: string) {
-  const { data: employees } = await supabase.from("employees").select("*").or(`matricula.eq.${matriculaOrId},id.eq.${matriculaOrId}`);
-  const emp = employees?.[0];
+  // Try by matricula first (most stable for human-entered IDs), then fallback to UUID id
+  let emp: any | undefined;
+  try {
+    const { data: byMatricula } = await supabase
+      .from("employees")
+      .select("*")
+      .eq("matricula", matriculaOrId)
+      .limit(1);
+    emp = byMatricula?.[0];
+  } catch {}
+
+  if (!emp) {
+    try {
+      const { data: byId } = await supabase
+        .from("employees")
+        .select("*")
+        .eq("id", matriculaOrId)
+        .limit(1);
+      emp = byId?.[0];
+    } catch {}
+  }
+
   if (!emp) return undefined;
+
+  // Reuse the normalized mapping used across the app
   const employeesMapped = await fetchEmployees();
   return employeesMapped.find((e) => e.id === (emp.matricula ?? emp.id));
 }
