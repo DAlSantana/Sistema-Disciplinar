@@ -98,15 +98,13 @@ export default function Relatorios() {
   const metricas = useMemo(() => {
     const total = dados.length;
     const aguardando = dados.filter((d) => d.status === "Sindicância").length;
-    const revisao = dados.filter((d) => d.status === "Sindicância").length;
     const finalizado = dados.filter((d) => d.status === "Finalizado").length;
-    return { total, aguardando, revisao, finalizado };
+    return { total, aguardando, finalizado };
   }, [dados]);
 
   const distribuicaoStatus = useMemo(
     () => [
-      { name: "Aguardando", value: metricas.aguardando },
-      { name: "Em Revisão", value: metricas.revisao },
+      { name: "Aguardando Parecer", value: metricas.aguardando },
       { name: "Finalizado", value: metricas.finalizado },
     ],
     [metricas],
@@ -121,7 +119,7 @@ export default function Relatorios() {
     return Array.from(mapa.entries()).map(([name, value]) => ({ name, value }));
   }, [dados]);
 
-  const CORES_STATUS = ["#F59E0B", "#3B82F6", "#22C55E"]; // amarelo, azul, verde
+  const CORES_STATUS = ["#3B82F6", "#22C55E"]; // azul (Sindicância), verde (Finalizado)
   const CORES_CLASS = ["#86EFAC", "#FDE68A", "#FCA5A5", "#F87171"]; // leve, média, grave, gravíssima
 
   const exportarCSV = () => {
