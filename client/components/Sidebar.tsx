@@ -74,6 +74,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "processos",
       nome: "Processos",
+      to: SIDEBAR_ROUTES.processos,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
