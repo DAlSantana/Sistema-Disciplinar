@@ -50,6 +50,38 @@ function deriveClassificationFromType(type?: { default_classification?: string |
   return normalizeClassification(type.default_classification) ?? normalizeClassification(type.name);
 }
 
+function formatStatusLabel(value?: string | null) {
+  if (!value && value !== "") return undefined;
+  const normalized = value?.toString().trim() ?? "";
+  if (!normalized) return undefined;
+
+  const cleaned = normalized.replace(/[_\s]+/g, " ").replace(/\s+/g, " ");
+  if (!cleaned) return undefined;
+
+  return cleaned
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function resolveHistoryStatus(entry: any) {
+  const candidates = [
+    entry?.status,
+    entry?.status_atual,
+    entry?.statusDescricao,
+    entry?.status_descricao,
+    entry?.status_text,
+  ];
+
+  for (const candidate of candidates) {
+    const formatted = formatStatusLabel(candidate);
+    if (formatted) return formatted;
+  }
+
+  return "-";
+}
+
 export default function GestorRegistrarDesvio() {
   const [funcionarioId, setFuncionarioId] = useState("");
   const [funcionarios, setFuncionarios] = useState<Array<{ id: string; nome: string }>>([]);
