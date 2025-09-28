@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   onSair?: () => void;
@@ -7,14 +7,36 @@ interface SidebarProps {
 
 import { supabase } from "@/lib/supabase";
 
+const SIDEBAR_ROUTES = {
+  dashboard: "/gestor",
+  "registrar-desvio": "/gestor/registrar",
+  processos: "/gestor/processos",
+  funcionarios: "/gestor/funcionarios",
+} as const;
+
+type SidebarItemId = keyof typeof SIDEBAR_ROUTES;
+
+function getActiveItemId(pathname: string): SidebarItemId {
+  if (pathname.startsWith(SIDEBAR_ROUTES["registrar-desvio"])) return "registrar-desvio";
+  if (pathname.startsWith(SIDEBAR_ROUTES.processos)) return "processos";
+  if (pathname.startsWith(SIDEBAR_ROUTES.funcionarios)) return "funcionarios";
+  return "dashboard";
+}
+
 export default function Sidebar({ onSair }: SidebarProps) {
-  const [activeItem, setActiveItem] = useState("dashboard");
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState<SidebarItemId>(() => getActiveItemId(location.pathname));
   const navigate = useNavigate();
 
-  const menuItems = [
+  useEffect(() => {
+    setActiveItem(getActiveItemId(location.pathname));
+  }, [location.pathname]);
+
+  const menuItems: Array<{ id: SidebarItemId; nome: string; icon: JSX.Element; to: string }> = [
     {
       id: "dashboard",
       nome: "Dashboard",
+      to: SIDEBAR_ROUTES.dashboard,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
@@ -32,6 +54,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "registrar-desvio",
       nome: "Registrar Desvio",
+      to: SIDEBAR_ROUTES["registrar-desvio"],
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
@@ -51,6 +74,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "processos",
       nome: "Processos",
+      to: SIDEBAR_ROUTES.processos,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
@@ -71,6 +95,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
     {
       id: "funcionarios",
       nome: "Funcionários",
+      to: SIDEBAR_ROUTES.funcionarios,
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
@@ -86,6 +111,7 @@ export default function Sidebar({ onSair }: SidebarProps) {
           <path d="M9.9901 5.82999C9.9901 4.45481 8.87533 3.33999 7.5001 3.33999C6.12491 3.33999 5.0101 4.45481 5.0101 5.82999C5.0101 7.20518 6.12491 8.31999 7.5001 8.31999C8.87533 8.31999 9.9901 7.20518 9.9901 5.82999ZM11.6501 5.82999C11.6501 8.12197 9.79206 9.97999 7.5001 9.97999C5.20812 9.97999 3.3501 8.12197 3.3501 5.82999C3.3501 3.53801 5.20812 1.67999 7.5001 1.67999C9.79206 1.67999 11.6501 3.53801 11.6501 5.82999Z" fill="currentColor" />
         </svg>
       ),
+      to: SIDEBAR_ROUTES.funcionarios,
     },
   ];
 
@@ -110,7 +136,10 @@ export default function Sidebar({ onSair }: SidebarProps) {
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => { setActiveItem(item.id); if (item.id === "dashboard") navigate("/gestor"); if (item.id === "registrar-desvio") navigate("/gestor/registrar"); if (item.id === "processos") navigate("/gestor/processos"); if (item.id === "funcionarios") navigate("/gestor/funcionarios"); }}
+              onClick={() => {
+                setActiveItem(item.id);
+                navigate(item.to);
+              }}
               className={`flex w-full items-center space-x-3 rounded-md px-3 py-2.5 text-left font-roboto text-sm font-medium transition-colors ${
                 activeItem === item.id
                   ? "bg-gray-100 text-sis-dark-text"
