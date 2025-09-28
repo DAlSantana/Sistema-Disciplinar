@@ -121,7 +121,8 @@ export default function GestorDashboard() {
           .slice(0, 5);
         setTopDesvios(mapped);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => { if (mounted) setLoading(false); });
 
     return () => {
       mounted = false;
