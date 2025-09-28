@@ -53,8 +53,8 @@ export default function RedefinirSenha() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:w-auto xl:min-w-[584px] xl:px-0 xl:pl-[136px] xl:pr-[68px]">
-        <div className="w-full max-w-md xl:max-w-[448px]">
+      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
+        <div className="w-full max-w-md sm:max-w-lg">
           <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
             <div className="mb-6 flex items-center sm:mb-8">
               <svg className="h-10 w-10 flex-shrink-0 sm:h-12 sm:w-12" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -109,7 +109,7 @@ export default function RedefinirSenha() {
         </div>
       </div>
 
-      <div className="hidden lg:flex lg:h-full lg:flex-1 xl:w-[720px] xl:flex-none">
+      <div className="hidden lg:flex lg:h-full lg:flex-1">
         <div className="flex h-screen w-full flex-col items-center justify-center bg-sis-bg-light">
           <img src="https://api.builder.io/api/v1/image/assets/TEMP/18fb8f921705a3e5fe1c084d8ea7a2d9adc3172b?width=1440" alt="Ilustração justiça" className="h-full w-full object-cover opacity-90" />
         </div>

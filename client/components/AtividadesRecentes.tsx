@@ -45,7 +45,7 @@ export default function AtividadesRecentes() {
   const list = useMemo(() => items.slice(0, 5), [items]);
 
   return (
-    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+    <div className="w-full h-full rounded-lg border bg-white p-6 shadow-sm">
       <div className="mb-4">
         <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Atividades Recentes</h3>
       </div>

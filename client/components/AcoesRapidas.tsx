@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 export default function AcoesRapidas() {
   const navigate = useNavigate();
   return (
-    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+    <div className="w-full h-full rounded-lg border bg-white p-6 shadow-sm">
       <div className="mb-4">
         <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">
           Ações Rápidas do Sistema
