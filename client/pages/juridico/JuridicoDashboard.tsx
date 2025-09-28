@@ -158,9 +158,13 @@ function getStatusClasses(s: StatusAtual) {
   }
 }
 
+const awaitingStatuses: StatusAtual[] = ["Sindicância", "Em Análise"];
+
 function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridico[]; loading: boolean }) {
   const navigate = useNavigate();
-  const aguardando = processos.filter((c) => c.status === "Sindicância");
+  const aguardando = processos
+    .filter((c) => awaitingStatuses.includes(c.status))
+    .sort((a, b) => (a.dataAbertura && b.dataAbertura ? a.dataAbertura.localeCompare(b.dataAbertura) : 0));
 
   return (
     <div className="rounded-md border border-sis-border">
@@ -186,7 +190,7 @@ function AwaitingLegalTable({ processos, loading }: { processos: ProcessoJuridic
           ) : aguardando.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="py-10 text-center text-sis-secondary-text">
-                Nenhum processo em sindicância no momento.
+                Nenhum processo aguardando análise jurídica.
               </TableCell>
             </TableRow>
           ) : (
