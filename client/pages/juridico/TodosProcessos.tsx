@@ -11,24 +11,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { fetchProcesses } from "@/lib/api";
 
 type Classificacao = "Leve" | "Média" | "Grave" | "Gravíssima";
-type StatusAtual = "Em Análise" | "Sindicância" | "Aguardando Assinatura" | "Finalizado";
+type StatusAtual = "Sindicância" | "Aguardando Assinatura" | "Finalizado";
 function getStatusClasses(s: StatusAtual) {
   switch (s) {
-    case "Em Análise":
-      return "bg-status-yellow-bg border-status-yellow-border text-status-yellow-text";
     case "Sindicância":
       return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
     case "Aguardando Assinatura":
       return "bg-status-purple-bg border-status-purple-border text-status-purple-text";
     case "Finalizado":
       return "bg-status-green-bg border-status-green-border text-status-green-text";
+    default:
+      return "bg-status-blue-bg border-status-blue-border text-status-blue-text";
   }
 }
 
 const statusOpcoes: ("todos" | StatusAtual)[] = [
   "todos",
-  "Em Análise",
   "Sindicância",
+  "Aguardando Assinatura",
   "Finalizado",
 ];
 
@@ -95,7 +95,7 @@ export default function TodosProcessos() {
                   <SelectContent>
                     {statusOpcoes.map((s) => (
                       <SelectItem key={s} value={s}>
-                        {s === "todos" ? "Todos os Status" : s}
+                        {s === "todos" ? "TODOS OS STATUS" : s}
                       </SelectItem>
                     ))}
                   </SelectContent>
