@@ -41,10 +41,6 @@ function normalizeClassification(raw?: string | null): ClassificacaoValue | unde
     case "gravissima":
       return "Gravissima";
     default:
-      if (sanitized.includes("gravissima")) return "Gravissima";
-      if (sanitized.includes("grave")) return "Grave";
-      if (sanitized.includes("media")) return "Media";
-      if (sanitized.includes("leve")) return "Leve";
       return undefined;
   }
 }
@@ -259,7 +255,7 @@ export default function GestorRegistrarDesvio() {
                   </select>
                 </div>
 
-                {/* Período da Ocorrência */}
+                {/* Per��odo da Ocorrência */}
                 <div className="sm:col-span-1">
                   <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
                     Início da Ocorrência
