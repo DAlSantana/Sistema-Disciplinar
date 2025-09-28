@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
@@ -7,6 +8,7 @@ import { errorMessage } from "@/lib/utils";
 export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
+  const [showSenha, setShowSenha] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -128,10 +130,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen items-center bg-white">
       {/* Lado Esquerdo - Formulário */}
-      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
-        <div className="w-full max-w-md sm:max-w-lg">
+      <div className="flex w-full items-center justify-center px-4 py-6 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
+        <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
           <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
             {/* Logo e Título */}
             <div className="mb-6 flex items-center sm:mb-8">
@@ -164,13 +166,24 @@ export default function Login() {
 
               <div className="space-y-3.5">
                 <label className="block font-roboto text-xs font-medium text-sis-dark-text xl:leading-5">Senha</label>
-                <input
-                  type="password"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
-                  placeholder="••••••"
-                />
+                <div className="relative">
+                  <input
+                    type={showSenha ? "text" : "password"}
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
+                    placeholder="•••••••••"
+                    aria-label="Senha"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSenha((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-sis-secondary-text hover:text-sis-blue focus:outline-none"
+                    aria-label={showSenha ? "Esconder senha" : "Mostrar senha"}
+                  >
+                    {showSenha ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex justify-end">
@@ -192,7 +205,7 @@ export default function Login() {
       </div>
 
       {/* Lado Direito - Ilustração */}
-      <div className="hidden lg:flex lg:h-full lg:flex-1">
+      <div className="hidden lg:flex lg:h-screen lg:w-1/2">
         <div className="flex h-screen w-full flex-col items-center justify-center bg-sis-bg-light">
           <img
             src="https://api.builder.io/api/v1/image/assets/TEMP/18fb8f921705a3e5fe1c084d8ea7a2d9adc3172b?width=1440"
