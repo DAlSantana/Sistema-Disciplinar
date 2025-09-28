@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SidebarAdministradorProps {
   onSair?: () => void;
@@ -8,6 +8,19 @@ interface SidebarAdministradorProps {
 export default function SidebarAdministrador({ onSair }: SidebarAdministradorProps) {
   const [activeItem, setActiveItem] = useState("dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  function idFromPath(pathname: string): string {
+    if (pathname.startsWith("/administrador/usuarios")) return "gerenciamento-usuarios";
+    if (pathname.startsWith("/administrador/importar-funcionarios")) return "importar-funcionarios";
+    if (pathname.startsWith("/administrador/configuracoes")) return "configuracoes-sistema";
+    if (pathname.startsWith("/administrador")) return "dashboard";
+    return "dashboard";
+  }
+
+  useEffect(() => {
+    setActiveItem(idFromPath(location.pathname));
+  }, [location.pathname]);
 
   const menuItems = [
     {
