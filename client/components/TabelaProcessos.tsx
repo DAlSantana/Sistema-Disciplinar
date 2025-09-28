@@ -9,7 +9,6 @@ interface Processo {
   tipoDesvio: string;
   status: StatusTag;
   dataInicio: string;
-  prazo: string;
 }
 
 interface TabelaProcessosProps {
@@ -66,9 +65,6 @@ export default function TabelaProcessos({ processos }: TabelaProcessosProps) {
                 <th className="px-4 py-3 text-left font-roboto text-sm font-medium text-sis-dark-text">
                   Data Início
                 </th>
-                <th className="px-4 py-3 text-left font-roboto text-sm font-medium text-sis-dark-text">
-                  Prazo
-                </th>
               </tr>
             </thead>
 
@@ -76,7 +72,7 @@ export default function TabelaProcessos({ processos }: TabelaProcessosProps) {
             <tbody>
               {processos.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center font-roboto text-sm text-sis-secondary-text">
+                  <td colSpan={5} className="px-4 py-8 text-center font-roboto text-sm text-sis-secondary-text">
                     Nenhum processo em andamento no momento.
                   </td>
                 </tr>
@@ -95,7 +91,6 @@ export default function TabelaProcessos({ processos }: TabelaProcessosProps) {
                       </span>
                     </td>
                     <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.dataInicio}</td>
-                    <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.prazo}</td>
                   </tr>
                 ))
               )}
