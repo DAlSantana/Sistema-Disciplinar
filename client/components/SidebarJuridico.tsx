@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SidebarJuridicoProps {
   onSair?: () => void;
@@ -8,6 +8,15 @@ interface SidebarJuridicoProps {
 export default function SidebarJuridico({ onSair }: SidebarJuridicoProps) {
   const [activeItem, setActiveItem] = useState("dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const p = location.pathname || "";
+    if (p.startsWith("/juridico/processos/aguardando")) setActiveItem("processos-analise");
+    else if (p.startsWith("/juridico/processos/todos")) setActiveItem("todos-processos");
+    else if (p.startsWith("/juridico/relatorios")) setActiveItem("relatorios");
+    else if (p.startsWith("/juridico")) setActiveItem("dashboard");
+  }, [location.pathname]);
 
   const menuItems = [
     {

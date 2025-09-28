@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import SidebarJuridico from "@/components/SidebarJuridico";
 import MetricCard from "@/components/MetricCard";
+import AtividadesRecentes from "@/components/AtividadesRecentes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchProcesses } from "@/lib/api";
@@ -362,16 +363,7 @@ export default function JuridicoDashboard() {
 
               {/* Atividades Recentes */}
               <div className="lg:col-span-1">
-                <Card className="border-sis-border bg-white h-fit">
-                  <CardHeader>
-                    <CardTitle className="text-xl">Atividades Recentes</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6 text-sm text-sis-secondary-text">
-                      <p>Nenhuma atividade recente.</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <AtividadesRecentes />
               </div>
             </div>
           </div>

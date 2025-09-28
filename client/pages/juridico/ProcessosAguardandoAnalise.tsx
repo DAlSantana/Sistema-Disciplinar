@@ -28,17 +28,32 @@ export default function ProcessosAguardandoAnalise() {
   const navegar = useNavigate();
   const [busca, setBusca] = useState("");
   const [processos, setProcessos] = useState<{ id: string; funcionario: string; tipoDesvio: string; classificacao: Classificacao; dataAbertura: string; status: StatusAtual; }[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    fetchProcesses().then((data) => {
-      if (mounted) setProcessos((data as any) || []);
-    });
+    setCarregando(true);
+    setErro(null);
+    fetchProcesses()
+      .then((data) => {
+        if (!mounted) return;
+        setProcessos((data as any) || []);
+      })
+      .catch((e: any) => {
+        if (!mounted) return;
+        setErro(typeof e?.message === "string" ? e.message : "Falha ao carregar processos");
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setCarregando(false);
+      });
     return () => { mounted = false; };
   }, []);
 
   const itens = useMemo(() => {
-    const aguardando = processos.filter((c) => c.status === "Sindicância");
+    // Mostrar processos que precisam de atuação jurídica: "Sindicância" ou "Em Análise"
+    const aguardando = processos.filter((c) => c.status === "Sindicância" || c.status === "Em Análise");
     if (!busca.trim()) return aguardando;
     const q = busca.toLowerCase();
     return aguardando.filter(
@@ -55,37 +70,41 @@ export default function ProcessosAguardandoAnalise() {
   };
 
   return (
-    <div className="flex h-screen bg-sis-bg-light">
+    <div className="flex h-screen bg-sis-bg-light" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:58:5">
       <SidebarJuridico onSair={aoSair} />
-      <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
-          <div className="mx-auto max-w-7xl space-y-6">
-            <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-1 flex-col" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:60:7">
+        <div className="flex-1 overflow-auto p-4 md:p-6" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:61:17">
+          <div className="mx-auto max-w-7xl space-y-6" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:62:11">
+            <div className="flex items-end justify-between gap-4" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:63:13">
               <div>
-                <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">
+                <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:64:15">
                   Processos Aguardando Análise Jurídica
                 </h1>
-                <p className="font-roboto text-sis-secondary-text">
+                <p className="font-roboto text-sis-secondary-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:68:17">
                   Lista de processos encaminhados para sindicância e parecer jurídico.
                 </p>
               </div>
-              <div className="w-full max-w-sm">
+              <div className="w-full max-w-sm" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:72:15">
                 <Input
                   placeholder="Buscar por ID, funcionário, desvio..."
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
+                  data-loc="client/components/ui/input.tsx:7:7"
                 />
               </div>
             </div>
 
-            <Card className="border-sis-border bg-white">
-              <CardHeader>
+            <Card className="border-sis-border bg-white" data-loc="client/components/ui/card.tsx:8:3">
+              <CardHeader data-loc="client/components/ui/card.tsx:23:3">
                 <CardTitle className="text-xl">Aguardando Parecer</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="rounded-md border border-sis-border">
-                  <Table>
-                    <TableHeader>
+                {erro && (
+                  <div className="mb-3 text-sm text-red-600">{erro}</div>
+                )}
+                <div className="rounded-md border border-sis-border" data-loc="client/components/ui/card.tsx:62:3">
+                  <Table data-loc="client/components/ui/table.tsx:8:3">
+                    <TableHeader data-loc="client/components/ui/table.tsx:22:3">
                       <TableRow>
                         <TableHead className="w-[14%]">ID do Processo</TableHead>
                         <TableHead className="w-[20%]">Funcionário</TableHead>
@@ -96,31 +115,41 @@ export default function ProcessosAguardandoAnalise() {
                         <TableHead className="w-[8%]">Ação</TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
-                      {itens.map((c) => (
-                        <TableRow key={c.id}>
-                          <TableCell className="font-medium">
-                            <button
-                              className="underline text-blue-600 hover:text-blue-800"
-                              onClick={() => navegar(`/juridico/processos/${c.id}`)}
-                            >
-                              {c.id}
-                            </button>
-                          </TableCell>
-                          <TableCell className="truncate">{c.funcionario}</TableCell>
-                          <TableCell className="truncate">{c.tipoDesvio}</TableCell>
-                          <TableCell>{c.classificacao}</TableCell>
-                          <TableCell className="text-sis-secondary-text">{c.dataAbertura}</TableCell>
-                          <TableCell>
-                            <Badge className={`border ${getStatusClasses(c.status)}`}>{c.status}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button size="sm" onClick={() => navegar(`/juridico/processos/${c.id}`)}>
-                              Analisar Processo
-                            </Button>
-                          </TableCell>
+                    <TableBody data-loc="client/components/ui/table.tsx:30:3">
+                      {carregando ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center text-sis-secondary-text">Carregando...</TableCell>
                         </TableRow>
-                      ))}
+                      ) : itens.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center text-sis-secondary-text">Nenhum processo encontrado.</TableCell>
+                        </TableRow>
+                      ) : (
+                        itens.map((c) => (
+                          <TableRow key={c.id}>
+                            <TableCell className="font-medium">
+                              <button
+                                className="underline text-blue-600 hover:text-blue-800"
+                                onClick={() => navegar(`/juridico/processos/${c.id}`)}
+                              >
+                                {c.id}
+                              </button>
+                            </TableCell>
+                            <TableCell className="truncate">{c.funcionario || "—"}</TableCell>
+                            <TableCell className="truncate">{c.tipoDesvio || "—"}</TableCell>
+                            <TableCell>{c.classificacao}</TableCell>
+                            <TableCell className="text-sis-secondary-text">{c.dataAbertura || "—"}</TableCell>
+                            <TableCell>
+                              <Badge className={`border ${getStatusClasses(c.status)}`}>{c.status}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button size="sm" onClick={() => navegar(`/juridico/processos/${c.id}`)}>
+                                Analisar Processo
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
