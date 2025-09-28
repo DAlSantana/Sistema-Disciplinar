@@ -46,10 +46,15 @@ export async function fetchEmployees() {
     gestorDireto: profilesMap.get(e.gestor_id)?.nome ?? "",
     historico:
       (processes || [])
-        .filter((pr) => pr.employee_id === e.id)
+        .filter((pr) => {
+          const empId = e.id; // UUID do employee
+          const empMat = (e as any).matricula; // matrícula do employee (se existir)
+          const prEmp = (pr as any).employee_id ?? (pr as any).employee_matricula ?? (pr as any).employee;
+          return prEmp === empId || (!!empMat && prEmp === empMat);
+        })
         .map((pr) => ({
           id: pr.id,
-          dataOcorrencia: (() => { const d = pr.created_at ?? (pr as any).data_da_ocorrencia ?? pr.createdAt ?? (pr as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
+          dataOcorrencia: (() => { const d = pr.created_at ?? (pr as any).periodo_ocorrencia_inicio ?? (pr as any).data_da_ocorrencia ?? pr.createdAt ?? (pr as any).dataOcorrencia; return d ? new Date(d).toLocaleDateString() : ""; })(),
           tipoDesvio: (pr as any)?.misconduct_types?.name ?? "",
           classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
           medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
