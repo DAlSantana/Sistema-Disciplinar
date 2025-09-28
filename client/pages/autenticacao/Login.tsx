@@ -130,10 +130,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen items-center bg-white">
       {/* Lado Esquerdo - Formulário */}
-      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
-        <div className="w-full max-w-md sm:max-w-lg">
+      <div className="flex w-full items-center justify-center px-4 py-6 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
+        <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
           <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
             {/* Logo e Título */}
             <div className="mb-6 flex items-center sm:mb-8">
@@ -178,7 +178,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowSenha((s) => !s)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-sis-secondary-text hover:text-sis-blue focus:outline-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-sis-secondary-text hover:text-sis-blue focus:outline-none"
                     aria-label={showSenha ? "Esconder senha" : "Mostrar senha"}
                   >
                     {showSenha ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -205,7 +205,7 @@ export default function Login() {
       </div>
 
       {/* Lado Direito - Ilustração */}
-      <div className="hidden lg:flex lg:h-full lg:flex-1">
+      <div className="hidden lg:flex lg:h-screen lg:w-1/2">
         <div className="flex h-screen w-full flex-col items-center justify-center bg-sis-bg-light">
           <img
             src="https://api.builder.io/api/v1/image/assets/TEMP/18fb8f921705a3e5fe1c084d8ea7a2d9adc3172b?width=1440"
