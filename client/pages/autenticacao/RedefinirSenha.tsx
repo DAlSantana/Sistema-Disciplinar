@@ -109,7 +109,7 @@ export default function RedefinirSenha() {
         </div>
       </div>
 
-      <div className="hidden lg:flex lg:h-full lg:flex-1 xl:w-[720px] xl:flex-none">
+      <div className="hidden lg:flex lg:h-full lg:flex-1">
         <div className="flex h-screen w-full flex-col items-center justify-center bg-sis-bg-light">
           <img src="https://api.builder.io/api/v1/image/assets/TEMP/18fb8f921705a3e5fe1c084d8ea7a2d9adc3172b?width=1440" alt="Ilustração justiça" className="h-full w-full object-cover opacity-90" />
         </div>
