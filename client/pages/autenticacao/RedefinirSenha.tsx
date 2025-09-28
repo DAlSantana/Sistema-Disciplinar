@@ -54,7 +54,7 @@ export default function RedefinirSenha() {
   return (
     <div className="flex min-h-screen bg-white">
       <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
-        <div className="w-full max-w-md xl:max-w-[448px]">
+        <div className="w-full max-w-md sm:max-w-lg">
           <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
             <div className="mb-6 flex items-center sm:mb-8">
               <svg className="h-10 w-10 flex-shrink-0 sm:h-12 sm:w-12" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
