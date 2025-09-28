@@ -78,7 +78,7 @@ export default function ProcessosAguardandoAnalise() {
             <div className="flex items-end justify-between gap-4" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:63:13">
               <div>
                 <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:64:15">
-                  Processos Aguardando Análise Jurídica
+                  Processos Aguardando Sindicância
                 </h1>
                 <p className="font-roboto text-sis-secondary-text" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:68:17">
                   Lista de processos encaminhados para sindicância e parecer jurídico.
