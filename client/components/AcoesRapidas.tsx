@@ -3,15 +3,13 @@ import { useNavigate } from "react-router-dom";
 export default function AcoesRapidas() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-[330px] w-full max-w-[363px] rounded-[10px] bg-white p-6 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-      {/* Header */}
-      <div className="mb-12">
-        <h3 className="font-roboto text-lg font-bold text-sis-dark-text">
+    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+      <div className="mb-4">
+        <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">
           Ações Rápidas do Sistema
         </h3>
       </div>
 
-      {/* Botões de ação */}
       <div className="space-y-3">
         <button
           type="button"

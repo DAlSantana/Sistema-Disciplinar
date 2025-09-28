@@ -45,14 +45,14 @@ export default function AtividadesRecentes() {
   const list = useMemo(() => items.slice(0, 5), [items]);
 
   return (
-    <div className="min-h-[330px] w-full max-w-[363px] rounded-[10px] bg-white p-6 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-      <div className="mb-6">
-        <h3 className="font-roboto text-lg font-bold text-sis-dark-text">Atividades Recentes</h3>
+    <div className="w-full rounded-lg border bg-white p-6 shadow-sm">
+      <div className="mb-4">
+        <h3 className="font-roboto text-base font-semibold text-sis-dark-text sm:text-lg">Atividades Recentes</h3>
       </div>
 
-      <div className="mb-6 space-y-6">
+      <div className="mb-4 space-y-4">
         {list.map((a) => (
-          <div key={a.id + a.at} className="space-y-1">
+          <div key={a.id + a.at} className="space-y-0.5">
             <div className="font-roboto text-sm text-sis-dark-text">{a.descricao}</div>
             <div className="font-roboto text-xs text-sis-secondary-text">{formatRelativo(a.at)}</div>
           </div>
@@ -62,7 +62,7 @@ export default function AtividadesRecentes() {
         )}
       </div>
 
-      <div className="flex items-center space-x-5">
+      <div className="flex items-center">
         <button className="flex items-center space-x-2 text-sis-blue hover:underline">
           <span className="font-roboto text-sm font-medium">Ver Todas</span>
           <svg className="h-4 w-4" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
