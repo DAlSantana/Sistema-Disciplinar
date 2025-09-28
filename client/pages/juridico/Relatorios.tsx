@@ -104,7 +104,7 @@ export default function Relatorios() {
 
   const distribuicaoStatus = useMemo(
     () => [
-      { name: "Aguardando Parecer", value: metricas.aguardando },
+      { name: "Sindicância", value: metricas.aguardando },
       { name: "Finalizado", value: metricas.finalizado },
     ],
     [metricas],
@@ -247,12 +247,12 @@ export default function Relatorios() {
               </Card>
               <Card className="border-sis-border bg-white">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Aguardando Parecer</CardTitle>
+                  <CardTitle className="text-sm font-medium">Sindicância</CardTitle>
                   <Clock className="h-4 w-4 text-amber-500" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{metricas.aguardando}</div>
-                  <p className="text-xs text-sis-secondary-text">Casos pendentes de análise</p>
+                  <p className="text-xs text-sis-secondary-text">Casos em sindicância</p>
                 </CardContent>
               </Card>
               <Card className="border-sis-border bg-white">
