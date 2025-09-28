@@ -310,7 +310,7 @@ export default function UsuariosAdminPage() {
 
                       <div className="mt-4 rounded-md border p-3">
                         <div className="mb-3 font-medium">Permissões individuais (exceções)</div>
-                        <div className="hidden sm:grid sm:grid-cols-[1fr,96px,96px,96px] sm:gap-3 sm:px-1 sm:pb-2 text-xs text-muted-foreground">
+                        <div className="hidden sm:grid sm:grid-cols-[1fr,96px,96px,96px] sm:gap-3 sm:pb-2 text-xs text-muted-foreground">
                           <div>Permissão</div>
                           <div className="text-center">Padrão</div>
                           <div className="text-center">Conceder</div>
@@ -318,18 +318,17 @@ export default function UsuariosAdminPage() {
                         </div>
                         <div className="space-y-1 max-h-64 overflow-auto pr-1">
                           {allPerms.map((perm) => (
-                            <div key={perm} className="grid grid-cols-[1fr,288px] items-center gap-3 py-1">
+                            <RadioGroup
+                              key={perm}
+                              className="grid grid-cols-[1fr,96px,96px,96px] items-center gap-3 py-1"
+                              value={novoOverrideMap[perm] ?? "default"}
+                              onValueChange={(v) => setNovoOverrideMap((m) => ({ ...m, [perm]: (v as any) }))}
+                            >
                               <span className="text-sm truncate" title={perm}>{perm}</span>
-                              <RadioGroup
-                                className="grid grid-cols-3 gap-3"
-                                value={novoOverrideMap[perm] ?? "default"}
-                                onValueChange={(v) => setNovoOverrideMap((m) => ({ ...m, [perm]: (v as any) }))}
-                              >
-                                <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="default" />Padrão</label>
-                                <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="grant" />Conceder</label>
-                                <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="revoke" />Revogar</label>
-                              </RadioGroup>
-                            </div>
+                              <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="default" />Padrão</label>
+                              <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="grant" />Conceder</label>
+                              <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="revoke" />Revogar</label>
+                            </RadioGroup>
                           ))}
                         </div>
                       </div>
@@ -416,7 +415,7 @@ export default function UsuariosAdminPage() {
 
                   <div className="mt-4 rounded-md border p-3">
                     <div className="mb-3 font-medium">Permissões individuais (exceções)</div>
-                    <div className="hidden sm:grid sm:grid-cols-[1fr,96px,96px,96px] sm:gap-3 sm:px-1 sm:pb-2 text-xs text-muted-foreground">
+                    <div className="hidden sm:grid sm:grid-cols-[1fr,96px,96px,96px] sm:gap-3 sm:pb-2 text-xs text-muted-foreground">
                       <div>Permissão</div>
                       <div className="text-center">Padrão</div>
                       <div className="text-center">Conceder</div>
@@ -424,18 +423,17 @@ export default function UsuariosAdminPage() {
                     </div>
                     <div className="space-y-1 max-h-64 overflow-auto pr-1">
                       {allPerms.map((perm) => (
-                        <div key={perm} className="grid grid-cols-[1fr,288px] items-center gap-3 py-1">
+                        <RadioGroup
+                          key={perm}
+                          className="grid grid-cols-[1fr,96px,96px,96px] items-center gap-3 py-1"
+                          value={overrideMap[perm] ?? "default"}
+                          onValueChange={(v) => setOverrideMap((m) => ({ ...m, [perm]: (v as any) }))}
+                        >
                           <span className="text-sm truncate" title={perm}>{perm}</span>
-                          <RadioGroup
-                            className="grid grid-cols-3 gap-3"
-                            value={overrideMap[perm] ?? "default"}
-                            onValueChange={(v) => setOverrideMap((m) => ({ ...m, [perm]: (v as any) }))}
-                          >
-                            <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="default" />Padrão</label>
-                            <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="grant" />Conceder</label>
-                            <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="revoke" />Revogar</label>
-                          </RadioGroup>
-                        </div>
+                          <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="default" />Padrão</label>
+                          <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="grant" />Conceder</label>
+                          <label className="flex items-center justify-center gap-2 text-xs"><RadioGroupItem value="revoke" />Revogar</label>
+                        </RadioGroup>
                       ))}
                     </div>
                   </div>
