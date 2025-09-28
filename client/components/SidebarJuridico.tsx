@@ -38,7 +38,7 @@ export default function SidebarJuridico({ onSair }: SidebarJuridicoProps) {
     },
     {
       id: "processos-analise",
-      nome: "Processos Aguardando Análise",
+      nome: "Processos Aguardando Sindicância",
       icon: (
         <svg
           className="h-5 w-5 flex-shrink-0"
