@@ -113,6 +113,7 @@ export default function SidebarAdministrador({ onSair }: SidebarAdministradorPro
                 setActiveItem(item.id);
                 if (item.id === "dashboard") navigate("/administrador");
                 if (item.id === "gerenciamento-usuarios") navigate("/administrador/usuarios");
+                if (item.id === "importar-funcionarios") navigate("/administrador/importar-funcionarios");
                 if (item.id === "configuracoes-sistema") navigate("/administrador/configuracoes");
               }}
               className={`flex w-full items-center space-x-3 rounded-md px-2 py-2.5 text-left font-roboto text-sm font-medium transition-colors ${
