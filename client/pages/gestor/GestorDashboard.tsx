@@ -135,9 +135,14 @@ export default function GestorDashboard() {
       <div className="flex flex-1 flex-col">
                 <div className="flex-1 overflow-auto p-4 md:p-6">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-8">
-              <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">Dashboard do Gestor</h1>
-              <h2 className="font-open-sans text-2xl font-semibold text-sis-dark-text">Visão Geral do Desempenho da Equipe</h2>
+            <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+              <div>
+                <h1 className="mb-1 font-open-sans text-3xl font-bold text-sis-dark-text">Dashboard do Gestor</h1>
+                <h2 className="font-open-sans text-base font-medium text-sis-secondary-text">Visão geral do desempenho da equipe</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleRegistrarDesvio} className="bg-sis-blue hover:bg-blue-700">Registrar Desvio</Button>
+              </div>
             </div>
             <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               {metricas.map((metrica, index) => (
