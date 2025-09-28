@@ -67,32 +67,56 @@ export async function fetchEmployees() {
 
 export async function fetchEmployeeById(matriculaOrId: string) {
   // Try by matricula first (most stable for human-entered IDs), then fallback to UUID id
-  let emp: any | undefined;
+  let rawEmp: any | undefined;
   try {
     const { data: byMatricula } = await supabase
       .from("employees")
       .select("*")
       .eq("matricula", matriculaOrId)
       .limit(1);
-    emp = byMatricula?.[0];
+    rawEmp = byMatricula?.[0];
   } catch {}
 
-  if (!emp) {
+  if (!rawEmp) {
     try {
       const { data: byId } = await supabase
         .from("employees")
         .select("*")
         .eq("id", matriculaOrId)
         .limit(1);
-      emp = byId?.[0];
+      rawEmp = byId?.[0];
     } catch {}
   }
 
-  if (!emp) return undefined;
+  if (!rawEmp) return undefined;
 
-  // Reuse the normalized mapping used across the app
+  // Start with the mapped base to keep UI fields consistent
   const employeesMapped = await fetchEmployees();
-  return employeesMapped.find((e) => e.id === (emp.matricula ?? emp.id));
+  const base = employeesMapped.find((e) => e.id === (rawEmp.matricula ?? rawEmp.id));
+  if (!base) return undefined;
+
+  // Load processes specifically for this employee UUID to ensure history is populated
+  const { data: proc } = await supabase
+    .from("processes")
+    .select(`
+      id, status, classificacao, resolucao, created_at, data_da_ocorrencia, periodo_ocorrencia_inicio,
+      misconduct_types ( name )
+    `)
+    .eq("employee_id", rawEmp.id);
+
+  const historico = (proc || []).map((pr: any) => ({
+    id: pr.id,
+    dataOcorrencia: (() => {
+      const d = pr.created_at ?? pr.periodo_ocorrencia_inicio ?? pr.data_da_ocorrencia ?? pr.createdAt ?? pr.dataOcorrencia;
+      return d ? new Date(d).toLocaleDateString() : "";
+    })(),
+    tipoDesvio: pr?.misconduct_types?.name ?? "",
+    classificacao: pr.classificacao ? (pr.classificacao === "Media" ? "Média" : pr.classificacao) : ("Leve" as any),
+    medidaAplicada: pr.resolucao ?? pr.descricao ?? "",
+    status: normalizeStatus(pr.status) as any,
+  }));
+
+  return { ...base, historico } as any;
 }
 
 function normalizeStatus(raw?: string | null): string {
