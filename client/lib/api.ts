@@ -124,7 +124,7 @@ export async function fetchSuspensionsByDateRange(startISO?: string, endISO?: st
     classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
     dataAbertura: (() => { const d = p.created_at ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.createdAt) ?? null,
-    status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
+    status: normalizeStatus(p.status) as any,
     resolucao: p.resolucao ?? "",
   }));
 }
@@ -147,7 +147,7 @@ export async function fetchProcessById(id: string) {
     classificacao: p.classificacao ? (p.classificacao === "Media" ? "Média" : p.classificacao) : ("Leve" as any),
     dataAbertura: (() => { const d = p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt; return d ? new Date(d).toLocaleDateString() : ""; })(),
     createdAt: (p.created_at ?? p.periodo_ocorrencia_inicio ?? p.createdAt) ?? null,
-    status: p.status ? p.status.replace(/_/g, " ") : ("Em Análise" as any),
+    status: normalizeStatus(p.status) as any,
     resolucao: p.resolucao ?? "",
   };
 }
