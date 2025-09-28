@@ -421,20 +421,6 @@ export default function UsuariosAdminPage() {
                     <Switch checked={edicao.ativo} onCheckedChange={(v) => setEdicao({ ...edicao, ativo: v })} />
                   </div>
 
-                  <div className="mt-6 rounded-md border p-3">
-                    <div className="mb-2 font-medium">Permissões herdadas do perfil</div>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      {allPerms.map((perm) => {
-                        const inherited = (profilePerms[edicao.perfil] || []).includes(perm);
-                        return (
-                          <label key={perm} className="flex items-center gap-2 text-sm">
-                            <input type="checkbox" checked={inherited} readOnly disabled />
-                            <span>{perm}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
 
                   <div className="mt-4 rounded-md border p-3">
                     <div className="mb-2 font-medium">Permissões individuais (exceções)</div>
