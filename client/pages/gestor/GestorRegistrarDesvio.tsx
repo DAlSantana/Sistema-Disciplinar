@@ -307,7 +307,7 @@ export default function GestorRegistrarDesvio() {
             </p>
 
             <form onSubmit={enviarFormulario} className="space-y-6 rounded-md border border-sis-border bg-white p-6 shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)]">
-              {/* Funcion��rio */}
+              {/* Funcionário */}
               <div className="grid gap-2 sm:grid-cols-2">
                 <div className="sm:col-span-1">
                   <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
@@ -325,7 +325,7 @@ export default function GestorRegistrarDesvio() {
                   </select>
                 </div>
 
-                {/* Per��odo da Ocorrência */}
+                {/* Período da Ocorrência */}
                 <div className="sm:col-span-1">
                   <label className="mb-1 block font-roboto text-sm font-medium text-sis-dark-text">
                     Início da Ocorrência
