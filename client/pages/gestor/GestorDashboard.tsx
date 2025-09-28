@@ -7,6 +7,7 @@ import MetricCard from "@/components/MetricCard";
 import TabelaProcessos from "@/components/TabelaProcessos";
 import { fetchProcesses } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type DashboardProc = {
   id: string;
@@ -30,6 +31,7 @@ export default function GestorDashboard() {
 
   const [processos, setProcessos] = useState<DashboardProc[]>([]);
   const [topDesvios, setTopDesvios] = useState<Array<{ name: string; count: number }>>([]);
+  const [loading, setLoading] = useState(true);
   const [metricas, setMetricas] = useState<Array<{ titulo: string; valor: string; descricao: string; icon: JSX.Element }>>([
     { titulo: "Processos Ativos", valor: "0", descricao: "", icon: (
         <svg className="h-4 w-4" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -84,6 +86,20 @@ export default function GestorDashboard() {
         }));
         setProcessos(itens);
 
+        // Fallback: calcular top desvios localmente a partir da lista
+        try {
+          const map = new Map<string, number>();
+          for (const p of itens) {
+            const key = p.tipoDesvio || "—";
+            map.set(key, (map.get(key) || 0) + 1);
+          }
+          const localTop = Array.from(map.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+          setTopDesvios(localTop);
+        } catch {}
+
         const total = list?.length || 0;
         const concluidos = (list || []).filter((p) => p.status === "Finalizado").length;
         const ativos = total - concluidos;
@@ -119,7 +135,8 @@ export default function GestorDashboard() {
           .slice(0, 5);
         setTopDesvios(mapped);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => { if (mounted) setLoading(false); });
 
     return () => {
       mounted = false;
@@ -130,13 +147,18 @@ export default function GestorDashboard() {
     <div className="flex h-screen bg-sis-bg-light">
       <Sidebar onSair={handleSair} />
       <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
+        <div className="flex-1 overflow-auto p-4 md:p-6">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-8">
-              <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">Dashboard do Gestor</h1>
-              <h2 className="font-open-sans text-2xl font-semibold text-sis-dark-text">Visão Geral do Desempenho da Equipe</h2>
+            <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+              <div>
+                <h1 className="mb-1 font-open-sans text-3xl font-bold text-sis-dark-text">Dashboard do Gestor</h1>
+                <h2 className="font-open-sans text-base font-medium text-sis-secondary-text">Visão geral do desempenho da equipe</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleRegistrarDesvio} className="bg-sis-blue hover:bg-blue-700">Registrar Desvio</Button>
+              </div>
             </div>
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {metricas.map((metrica, index) => (
                 <MetricCard key={index} titulo={metrica.titulo} valor={metrica.valor} descricao={metrica.descricao} icon={metrica.icon} />
               ))}
@@ -148,16 +170,32 @@ export default function GestorDashboard() {
                   <CardTitle>Principais Desvios Ofensores</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {topDesvios.length === 0 ? (
+                  {loading ? (
+                    <div className="text-sm text-sis-secondary-text">Carregando...</div>
+                  ) : topDesvios.length === 0 ? (
                     <div className="text-sm text-sis-secondary-text">Sem dados disponíveis.</div>
                   ) : (
-                    <ul className="space-y-2">
-                      {topDesvios.map((it, idx) => (
-                        <li key={idx} className="flex items-center justify-between text-sm">
-                          <span className="truncate pr-4">{it.name}</span>
-                          <span className="font-medium">{it.count}</span>
-                        </li>
-                      ))}
+                    <ul className="space-y-3">
+                      {(() => {
+                        const max = Math.max(...topDesvios.map((t) => t.count));
+                        const total = topDesvios.reduce((a, b) => a + b.count, 0) || 1;
+                        return topDesvios.map((it, idx) => {
+                          const pct = max ? Math.round((it.count / max) * 100) : 0;
+                          const share = Math.round((it.count / total) * 100);
+                          return (
+                            <li key={idx} className="text-sm">
+                              <div className="mb-1 flex items-center justify-between">
+                                <span className="truncate pr-4 text-sis-dark-text">{it.name}</span>
+                                <span className="font-medium text-sis-dark-text">{it.count}</span>
+                              </div>
+                              <div className="h-2 w-full overflow-hidden rounded bg-gray-100">
+                                <div className="h-2 rounded bg-sis-blue" style={{ width: `${pct}%` }} />
+                              </div>
+                              <div className="mt-1 text-[11px] text-sis-secondary-text">{share}% do top 5</div>
+                            </li>
+                          );
+                        });
+                      })()}
                     </ul>
                   )}
                 </CardContent>

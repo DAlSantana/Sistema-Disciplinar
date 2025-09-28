@@ -74,39 +74,31 @@ export default function TabelaProcessos({ processos }: TabelaProcessosProps) {
 
             {/* Corpo da Tabela */}
             <tbody>
-              {processos.map((processo, index) => (
-                <tr
-                  key={processo.id}
-                  className={`border-b border-sis-border ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="px-4 py-4 font-roboto text-sm font-medium text-sis-dark-text">
-                    {processo.id}
-                  </td>
-                  <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">
-                    {processo.colaborador}
-                  </td>
-                  <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">
-                    {processo.tipoDesvio}
-                  </td>
-                  <td className="px-4 py-4">
-                    <span
-                      className={`inline-flex rounded-full border px-3 py-1 font-roboto text-xs font-semibold ${getStatusStyles(
-                        processo.status.cor
-                      )}`}
-                    >
-                      {processo.status.texto}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">
-                    {processo.dataInicio}
-                  </td>
-                  <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">
-                    {processo.prazo}
+              {processos.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center font-roboto text-sm text-sis-secondary-text">
+                    Nenhum processo em andamento no momento.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                processos.map((processo, index) => (
+                  <tr
+                    key={processo.id}
+                    className={`border-b border-sis-border ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+                  >
+                    <td className="px-4 py-4 font-roboto text-sm font-medium text-sis-dark-text">{processo.id}</td>
+                    <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.colaborador}</td>
+                    <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.tipoDesvio}</td>
+                    <td className="px-4 py-4">
+                      <span className={`inline-flex rounded-full border px-3 py-1 font-roboto text-xs font-semibold ${getStatusStyles(processo.status.cor)}`}>
+                        {processo.status.texto}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.dataInicio}</td>
+                    <td className="px-4 py-4 font-roboto text-sm text-sis-secondary-text">{processo.prazo}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
