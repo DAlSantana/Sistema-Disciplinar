@@ -53,14 +53,21 @@ Deno.serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const recipientEmails = [
-      (processData as any).notification_email_1,
-      (processData as any).notification_email_2,
-      (processData as any).notification_email_3,
-    ]
-      .filter(Boolean)
-      .map((e: string) => e.trim())
-      .filter((e: string) => e.length > 0);
+    // Allow callers to override recipients by providing a `recipients` array in the request body
+    const recipientEmailsFromBody: string[] = Array.isArray(recipients)
+      ? recipients.filter(Boolean).map((r: string) => (r || '').trim()).filter((r: string) => r.length > 0)
+      : [];
+
+    const recipientEmails = recipientEmailsFromBody.length > 0
+      ? recipientEmailsFromBody
+      : [
+          (processData as any).notification_email_1,
+          (processData as any).notification_email_2,
+          (processData as any).notification_email_3,
+        ]
+          .filter(Boolean)
+          .map((e: string) => e.trim())
+          .filter((e: string) => e.length > 0);
 
     if (recipientEmails.length === 0) {
       return new Response(
