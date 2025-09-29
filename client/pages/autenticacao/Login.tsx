@@ -132,34 +132,37 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center bg-white">
       {/* Lado Esquerdo - Formulário */}
-      <div className="flex w-full items-center justify-center px-4 py-6 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
-        <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
-          <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
+      <div className="flex w-full items-center justify-center px-4 py-6 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10 max-[360px]:px-3 max-[360px]:py-4">
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+          <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10 max-[360px]:p-4">
             {/* Logo e Título */}
-            <div className="mb-6 flex items-center sm:mb-8">
+            <div className="mb-6 flex items-center sm:mb-8 max-[360px]:mb-5">
               <img
                 className="h-10 w-10 flex-shrink-0 sm:h-12 sm:w-12"
                 src="/logo.svg"
                 alt="Logo SisDisciplinar"
               />
-              <h1 className="ml-2 font-open-sans text-2xl font-bold italic text-sis-blue sm:ml-3 sm:text-3xl xl:text-[38px] xl:leading-[38px]">SisDisciplinar</h1>
+              <h1 className="ml-2 font-open-sans text-2xl font-bold italic text-sis-blue sm:ml-3 sm:text-3xl xl:text-[38px] xl:leading-[38px] max-[360px]:text-xl">SisDisciplinar</h1>
             </div>
 
             {/* Cabeçalho Principal */}
-            <div className="mb-6 text-center sm:mb-8">
-              <h2 className="mb-2 font-open-sans text-xl font-bold text-sis-dark-text sm:mb-3 sm:text-2xl xl:text-[30px] xl:leading-9">Acesse sua conta</h2>
-              <p className="font-roboto text-sm text-sis-secondary-text sm:text-base xl:leading-6">Bem-vindo de volta ao SisDisciplinar!</p>
+            <div className="mb-6 text-center sm:mb-8 max-[360px]:mb-5">
+              <h2 className="mb-2 font-open-sans text-xl font-bold text-sis-dark-text sm:mb-3 sm:text-2xl xl:text-[30px] xl:leading-9 max-[360px]:text-lg">Acesse sua conta</h2>
+              <p className="font-roboto text-sm text-sis-secondary-text sm:text-base xl:leading-6 max-[360px]:text-xs">Bem-vindo de volta ao SisDisciplinar!</p>
             </div>
 
             {/* Formulário de Login */}
-            <form onSubmit={enviarLogin} className="space-y-6">
+            <form onSubmit={enviarLogin} className="space-y-6 max-[360px]:space-y-5">
               <div className="space-y-3.5">
                 <label className="block font-roboto text-xs font-medium text-sis-dark-text xl:leading-5">Nome de Usuário</label>
                 <input
                   type="text"
+                  inputMode="email"
+                  autoComplete="username"
+                  required
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
+                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2 max-[360px]:text-xs max-[360px]:py-1.5"
                   placeholder="seu.email@email.com"
                 />
               </div>
@@ -169,9 +172,11 @@ export default function Login() {
                 <div className="relative">
                   <input
                     type={showSenha ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
-                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
+                    className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2 max-[360px]:text-xs max-[360px]:py-1.5"
                     placeholder="•••••••••"
                     aria-label="Senha"
                   />
@@ -196,7 +201,7 @@ export default function Login() {
                 </button>
               </div>
 
-              <button type="submit" className="w-full rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 xl:h-[40px] xl:py-2.5">
+              <button type="submit" className="w-full rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 xl:h-[40px] xl:py-2.5 max-[360px]:py-2">
                 Entrar
               </button>
             </form>
