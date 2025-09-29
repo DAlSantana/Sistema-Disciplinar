@@ -253,6 +253,29 @@ export default function RevisaoProcessoJuridico() {
                           <Button onClick={aoFinalizar} className="bg-sis-blue hover:bg-blue-700 text-white">
                             Finalizar Sindicância e Salvar Decisão
                           </Button>
+                          <Button variant="outline" onClick={async () => {
+                            const recipients = [notifyEmail1, notifyEmail2, notifyEmail3]
+                              .filter(Boolean)
+                              .map((r) => r!.trim())
+                              .filter((r) => r.length > 0);
+
+                            if (recipients.length === 0) {
+                              toast({ title: 'Nenhum e-mail informado', description: 'Informe ao menos um e-mail para enviar o relatório.' });
+                              return;
+                            }
+
+                            try {
+                              const invokeRes = await supabase.functions.invoke('send-process-report', { body: { process_id: idProcesso, recipients } });
+                              // If invokeRes has error field, show it; otherwise success
+                              if ((invokeRes as any)?.error) {
+                                toast({ title: 'Erro ao enviar', description: (invokeRes as any).error });
+                              } else {
+                                toast({ title: 'Relatório enviado', description: 'E-mails enviados com sucesso.' });
+                              }
+                            } catch (err: any) {
+                              toast({ title: 'Erro ao enviar', description: errorMessage(err) });
+                            }
+                          }}>Enviar Relatório Agora</Button>
                         </div>
                       </>
                     )}

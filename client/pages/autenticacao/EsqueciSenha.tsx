@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 export default function EsqueciSenha() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,13 +69,22 @@ export default function EsqueciSenha() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 disabled:opacity-60 xl:h-[40px] xl:py-2.5 max-[360px]:py-2"
-              >
-                {loading ? "Enviando..." : "Enviar link"}
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="rounded-md border border-sis-border bg-white py-2.5 font-roboto text-sm font-medium text-sis-dark-text hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 xl:h-[40px] xl:py-2.5 max-[360px]:py-2"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 disabled:opacity-60 xl:h-[40px] xl:py-2.5 max-[360px]:py-2"
+                >
+                  {loading ? "Enviando..." : "Enviar link"}
+                </button>
+              </div>
             </form>
           </div>
         </div>
