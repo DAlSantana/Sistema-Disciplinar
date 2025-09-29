@@ -265,10 +265,9 @@ export default function RevisaoProcessoJuridico() {
                             }
 
                             try {
-                              const invokeRes = await supabase.functions.invoke('send-process-report', { body: { process_id: idProcesso, recipients } });
-                              // If invokeRes has error field, show it; otherwise success
-                              if ((invokeRes as any)?.error) {
-                                toast({ title: 'Erro ao enviar', description: (invokeRes as any).error });
+                              const { data, error } = await supabase.functions.invoke('send-process-report', { body: { process_id: idProcesso, recipients } }) as any;
+                              if (error) {
+                                toast({ title: 'Erro ao enviar', description: error?.message ?? String(error) });
                               } else {
                                 toast({ title: 'Relatório enviado', description: 'E-mails enviados com sucesso.' });
                               }
