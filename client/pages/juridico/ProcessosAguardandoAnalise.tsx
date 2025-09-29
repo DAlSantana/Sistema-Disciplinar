@@ -73,7 +73,7 @@ export default function ProcessosAguardandoAnalise() {
     <div className="flex h-screen bg-sis-bg-light" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:58:5">
       <SidebarJuridico onSair={aoSair} />
       <div className="flex flex-1 flex-col" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:60:7">
-        <div className="flex-1 overflow-auto p-4 md:p-6" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:61:17">
+        <div className="flex-1 overflow-auto p-4 md:p-6 max-[360px]:p-3" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:61:17">
           <div className="mx-auto max-w-7xl space-y-6" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:62:11">
             <div className="flex items-end justify-between gap-4" data-loc="client/pages/juridico/ProcessosAguardandoAnalise.tsx:63:13">
               <div>

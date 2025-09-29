@@ -136,7 +136,7 @@ export default function ProcessosPage() {
     <div className="flex h-screen bg-sis-bg-light">
       <Sidebar onSair={handleSair} />
       <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
+                <div className="flex-1 overflow-auto p-4 md:p-6 max-[360px]:p-3">
           <div className="mx-auto max-w-7xl">
             <div className="mb-6">
               <h1 className="mb-2 font-open-sans text-3xl font-bold text-sis-dark-text">

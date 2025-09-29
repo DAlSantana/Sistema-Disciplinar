@@ -97,11 +97,11 @@ export default function RevisaoProcessoJuridico() {
     <div className="flex h-screen bg-sis-bg-light">
       <SidebarJuridico onSair={aoSair} />
       <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
+                <div className="flex-1 overflow-auto p-4 md:p-6 max-[360px]:p-3">
           <div className="mx-auto max-w-5xl space-y-6">
             {!processoJuridico ? (
               <Card className="border-sis-border bg-white">
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="p-6 space-y-4 max-[360px]:p-4">
                   <h1 className="font-open-sans text-2xl font-bold text-sis-dark-text">Processo não encontrado</h1>
                   <Button variant="outline" onClick={() => navegar(-1)}>Voltar</Button>
                 </CardContent>
