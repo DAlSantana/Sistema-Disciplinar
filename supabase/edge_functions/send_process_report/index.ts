@@ -13,7 +13,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { process_id } = await req.json();
+    const { process_id, recipients } = await req.json();
 
     const resendApiKey = Deno.env.get('RESEND_API_KEY') ?? '';
     if (!resendApiKey) {
