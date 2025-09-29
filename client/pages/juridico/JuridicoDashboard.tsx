@@ -304,7 +304,7 @@ export default function JuridicoDashboard() {
       {/* Conteúdo Principal */}
       <div className="flex flex-1 flex-col">
         {/* Dashboard Content */}
-        <div className="flex-1 overflow-auto p-4 md:p-6">
+        <div className="flex-1 overflow-auto p-4 md:p-6 max-[360px]:p-3">
           <div className="mx-auto max-w-7xl">
             {/* Título Principal */}
             <div className="mb-8">

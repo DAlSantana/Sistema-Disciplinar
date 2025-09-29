@@ -166,7 +166,7 @@ export default function Relatorios() {
     <div className="flex h-screen bg-sis-bg-light">
       <SidebarJuridico onSair={aoSair} />
       <div className="flex flex-1 flex-col">
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6 max-[360px]:p-3">
           <div className="mx-auto max-w-7xl space-y-6">
             <div className="space-y-3">
               <div>

@@ -79,7 +79,7 @@ export default function AdministradorDashboard() {
         <SidebarAdministrador onSair={handleSair} />
 
         {/* Conteúdo principal */}
-        <div className="flex-1 p-4 md:p-6">
+        <div className="flex-1 p-4 md:p-6 max-[360px]:p-3">
           {/* Título principal */}
           <div className="mb-6">
             <h1 className="font-open-sans text-[30px] font-bold leading-[36px] text-sis-dark-text">

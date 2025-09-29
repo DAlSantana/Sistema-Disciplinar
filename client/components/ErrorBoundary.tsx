@@ -31,7 +31,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
       const msg = errorMessage(this.state.error);
       return (
         <div className="min-h-screen bg-sis-bg-light text-sis-dark-text flex items-center justify-center p-6">
-          <div className="w-full max-w-xl rounded-md border border-sis-border bg-white p-6 shadow">
+          <div className="w-full max-w-xl rounded-md border border-sis-border bg-white p-6 max-[360px]:p-4 shadow">
             <h1 className="font-open-sans text-2xl font-bold mb-2">Ocorreu um erro inesperado</h1>
             <p className="font-roboto text-sm text-sis-secondary-text mb-4">Tente recarregar a página. Se o problema persistir, informe o administrador.</p>
             <div className="mb-4 rounded bg-gray-50 p-3 text-xs break-words">

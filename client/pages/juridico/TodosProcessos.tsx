@@ -71,7 +71,7 @@ export default function TodosProcessos() {
     <div className="flex h-screen bg-sis-bg-light">
       <SidebarJuridico onSair={aoSair} />
       <div className="flex flex-1 flex-col">
-                <div className="flex-1 overflow-auto p-4 md:p-6">
+                <div className="flex-1 overflow-auto p-4 md:p-6 max-[360px]:p-3">
           <div className="mx-auto max-w-7xl space-y-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>

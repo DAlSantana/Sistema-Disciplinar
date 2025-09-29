@@ -31,9 +31,9 @@ export default function EsqueciSenha() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10">
-        <div className="w-full max-w-md sm:max-w-lg">
-          <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10">
+      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:px-8 xl:px-10 max-[360px]:px-3 max-[360px]:py-6">
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
+          <div className="rounded-[10px] border border-white bg-white shadow-[0_0_2px_0_rgba(23,26,31,0.12),0_0_1px_0_rgba(23,26,31,0.07)] p-6 sm:p-8 xl:p-10 max-[360px]:p-4">
             <div className="mb-6 flex items-center sm:mb-8">
               <svg className="h-10 w-10 flex-shrink-0 sm:h-12 sm:w-12" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="48" height="48" stroke="white" />
@@ -44,22 +44,25 @@ export default function EsqueciSenha() {
                 <path d="M42.6634 20.0812C42.882 20.8973 42.3976 21.7363 41.5815 21.9551L33.508 24.1182C32.0571 24.507 30.5656 23.6459 30.1769 22.195C29.7881 20.7438 30.6491 19.2524 32.1001 18.8636L40.1735 16.7005C40.9897 16.4818 41.8287 16.9661 42.0473 17.7823L42.6634 20.0812Z" fill="#0F74C7" />
                 <path d="M19.6489 15.7031C20.7112 16.7653 20.7112 18.4874 19.6489 19.5497C18.5867 20.6119 16.8646 20.6119 15.8024 19.5497L6.22156 9.96888C5.62406 9.37138 5.62406 8.40263 6.22156 7.80514L7.90439 6.12229C8.50191 5.52479 9.47064 5.52479 10.0682 6.12229L19.6489 15.7031Z" fill="#0F74C7" />
               </svg>
-              <h1 className="ml-2 font-open-sans text-2xl font-bold italic text-sis-blue sm:ml-3 sm:text-3xl xl:text-[38px] xl:leading-[38px]">SisDisciplinar</h1>
+              <h1 className="ml-2 font-open-sans text-2xl font-bold italic text-sis-blue sm:ml-3 sm:text-3xl xl:text-[38px] xl:leading-[38px] max-[360px]:text-xl">SisDisciplinar</h1>
             </div>
 
-            <div className="mb-6 text-center sm:mb-8">
-              <h2 className="mb-2 font-open-sans text-xl font-bold text-sis-dark-text sm:mb-3 sm:text-2xl xl:text-[30px] xl:leading-9">Solicitar Redefinição</h2>
-              <p className="font-roboto text-sm text-sis-secondary-text sm:text-base xl:leading-6">Informe seu e-mail para receber o link de redefinição.</p>
+            <div className="mb-6 text-center sm:mb-8 max-[360px]:mb-5">
+              <h2 className="mb-2 font-open-sans text-xl font-bold text-sis-dark-text sm:mb-3 sm:text-2xl xl:text-[30px] xl:leading-9 max-[360px]:text-lg">Solicitar Redefinição</h2>
+              <p className="font-roboto text-sm text-sis-secondary-text sm:text-base xl:leading-6 max-[360px]:text-xs">Informe seu e-mail para receber o link de redefinição.</p>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-6">
+            <form onSubmit={onSubmit} className="space-y-6 max-[360px]:space-y-5">
               <div className="space-y-3.5">
                 <label className="block font-roboto text-xs font-medium text-sis-dark-text xl:leading-5">E-mail</label>
                 <input
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2"
+                  className="w-full rounded-md border border-sis-border bg-white px-3 py-2 font-roboto text-sm text-sis-secondary-text placeholder:text-sis-secondary-text focus:border-sis-blue focus:outline-none focus:ring-1 focus:ring-sis-blue xl:h-[37px] xl:px-3 xl:py-2 max-[360px]:text-xs max-[360px]:py-1.5"
                   placeholder="seu.email@email.com"
                 />
               </div>
@@ -67,7 +70,7 @@ export default function EsqueciSenha() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 disabled:opacity-60 xl:h-[40px] xl:py-2.5"
+                className="w-full rounded-md bg-sis-blue py-2.5 font-roboto text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sis-blue focus:ring-offset-2 disabled:opacity-60 xl:h-[40px] xl:py-2.5 max-[360px]:py-2"
               >
                 {loading ? "Enviando..." : "Enviar link"}
               </button>
